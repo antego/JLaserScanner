@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 /**
  * Created by anton on 12.03.2015.

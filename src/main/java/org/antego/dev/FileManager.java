@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;

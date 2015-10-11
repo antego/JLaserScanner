@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;

@@ -1,12 +1,9 @@
-package sample;
+package org.antego.dev;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.opencv.core.Core;
 import org.opencv.highgui.Highgui;

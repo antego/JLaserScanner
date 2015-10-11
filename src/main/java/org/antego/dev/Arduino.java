@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 import javafx.application.Platform;
 import jssc.SerialPort;

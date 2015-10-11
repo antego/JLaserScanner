@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 import org.opencv.core.Mat;
 

@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
    <children>
       <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
       <VBox layoutX="675.0" layoutY="14.0">

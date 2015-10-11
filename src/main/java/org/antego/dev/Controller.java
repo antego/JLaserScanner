@@ -1,4 +1,4 @@
-package sample;
+package org.antego.dev;
 
 import com.sun.prism.impl.Disposer;
 import javafx.application.Platform;

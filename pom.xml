@@ -2,12 +2,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
 					  http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <repositories>
-        <repository>
-            <id>javaopencvbook</id>
-            <url>https://raw.github.com/JavaOpenCVBook/code/maven2/</url>
-        </repository>
-    </repositories>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.antego.dev</groupId>
@@ -16,7 +10,20 @@
     <version>1.0-SNAPSHOT</version>
     <name>Laser Scanner</name>
     <url>https://github.com/antego/Java-Laser-Scanner</url>
+
     <dependencies>
+        <dependency>
+            <groupId>org.opencv</groupId>
+            <artifactId>opencv_jar</artifactId>
+            <version>2.4.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opencv</groupId>
+            <artifactId>libopencv_native</artifactId>
+            <version>2.4.10</version>
+            <type>so</type>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.scream3r</groupId>
             <artifactId>jssc</artifactId>
@@ -33,54 +40,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>org.antego.dev.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.googlecode.mavennatives</groupId>
-                <artifactId>maven-nativedependencies-plugin</artifactId>
-                <version>0.0.7</version>
-                <executions>
-                    <execution>
-                        <id>unpacknatives</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--Мой плагин-->
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
@@ -91,6 +50,69 @@
                         <exclude>org/antego/dev/Arduino.java</exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <classpathLayoutType>custom</classpathLayoutType>
+                            <customClasspathLayout>$${artifact.artifactId}.$${artifact.extension}
+                            </customClasspathLayout>
+                            <mainClass>org.antego.dev.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18</version>
+                <configuration>
+                    <forkMode>once</forkMode>
+                    <argLine>-Djava.library.path="${project.build.directory}/lib"</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/main/resources/assembly.xml</descriptor>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

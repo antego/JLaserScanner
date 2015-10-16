@@ -12,7 +12,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
         AnchorPane root = (AnchorPane) loader.load();
         Controller controller = loader.getController();
         primaryStage.setTitle("Laser Scanner");
@@ -23,7 +23,7 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+        System.loadLibrary("opencv_native");
         launch(args);
     }
 }

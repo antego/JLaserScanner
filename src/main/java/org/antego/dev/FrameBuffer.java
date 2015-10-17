@@ -4,9 +4,7 @@ import org.opencv.core.Mat;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 
-/**
- * Created by anton on 09.03.2015.
- */
+
 public class FrameBuffer {
     public static int frameWidth = 640;
     public static int frameHeight = 480;
@@ -15,17 +13,18 @@ public class FrameBuffer {
     VideoCapture camera;
     Thread t ;
 
-    public FrameBuffer(int frameWidth, int frameHeight) throws Exception{
-        camera = new VideoCapture(1);
+    public FrameBuffer(int camId, int frameWidth, int frameHeight) throws Exception{
+        camera = new VideoCapture(camId);
+        long start_time = System.currentTimeMillis();
+        //maybe faster check with .isOpen()
+        while (!camera.isOpened()) {
+            if(System.currentTimeMillis() - start_time > 1000)
+                throw new Exception("Camera " + camId + " doesn't opened, try different id.");
+        }
         FrameBuffer.frameWidth = frameWidth;
         FrameBuffer.frameHeight = frameHeight;
         camera.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, FrameBuffer.frameWidth);
         camera.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, FrameBuffer.frameHeight);
-        long start_time = System.currentTimeMillis();
-        while (!camera.grab()) {
-            if(System.currentTimeMillis() - start_time > 3000)
-                throw new Exception("camera doesn't opened");
-        }
         t = new Thread(new FrameFetcher(camera, frame));
         t.start();
     }
@@ -46,10 +45,12 @@ public class FrameBuffer {
             lastFrame = frame;
         }
         public void run() {
-            while (!Thread.interrupted())
-                if (!camera.read(lastFrame))
+            while (!Thread.interrupted()) {
+                //maybe faster check with .grab()
+                if (!camera.read(lastFrame)) {
                     break;
-
+                }
+            }
             camera.release();
         }
     }

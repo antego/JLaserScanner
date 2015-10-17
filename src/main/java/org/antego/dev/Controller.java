@@ -29,6 +29,8 @@ public class Controller implements Initializable {
     @FXML
     private TextField frameHeightFld;
     @FXML
+    private TextField camIdFld;
+    @FXML
     private ImageView currentFrame;
     @FXML
     private RadioButton manual_rd;
@@ -76,12 +78,12 @@ public class Controller implements Initializable {
     private TextField valMax;
 
     private volatile boolean takeShoot;
-    private Double angle = new Double(0);
+    private Double angle = .0;
     private Pane rootElement;
     private Thread captureThread;
-    private FormulaSolver fs = new FormulaSolver();
-    private FileManager fm = new FileManager();
-    private ImageProcessor2 ip2 = new ImageProcessor2();
+    private FormulaSolver formulaSolver = new FormulaSolver();
+    private FileManager fileManager = new FileManager();
+    private ImageProcessor imageProcessor = new ImageProcessor();
     private volatile boolean isScanning = false;
     private boolean motionDetection;
     private Mat oldFrame;
@@ -97,7 +99,7 @@ public class Controller implements Initializable {
         auto_pane.setVisible(false);
         manual_pane.setVisible(true);
         manual_rd.setSelected(true);
-        double[] thresholds = ip2.getThresholds();
+        double[] thresholds = imageProcessor.getThresholds();
         hueMin1.setText(thresholds[0] + "");
         hueMax1.setText(thresholds[1] + "");
         hueMin2.setText(thresholds[2] + "");
@@ -111,25 +113,25 @@ public class Controller implements Initializable {
     protected void modeManual(ActionEvent event) {
         auto_pane.setVisible(false);
         manual_pane.setVisible(true);
-        fs.setMode(true);
+        formulaSolver.setMode(true);
     }
 
     @FXML
     protected void modeAuto(ActionEvent event) {
         manual_pane.setVisible(false);
         auto_pane.setVisible(true);
-        fs.setMode(false);
+        formulaSolver.setMode(false);
     }
 
     @FXML
     protected void rawImgClicked(ActionEvent event) {
-        ip2.setShowRawImg(rawImg_checkbox.isSelected());
+        imageProcessor.setShowRawImg(rawImg_checkbox.isSelected());
     }
 
     @FXML
     protected void applyThresholdsClick(ActionEvent event) {
         if (hueMin1.getText() != null && hueMin2 != null && hueMax1 != null && hueMax2 != null && satMin != null && satMax != null && valMin != null && valMax != null) {
-            ip2.setThresholds(Double.parseDouble(hueMin1.getText()), Double.parseDouble(hueMax1.getText()), Double.parseDouble(hueMin2.getText()), Double.parseDouble(hueMax2.getText()), Double.parseDouble(satMin.getText()), Double.parseDouble(satMax.getText()), Double.parseDouble(valMin.getText()), Double.parseDouble(valMax.getText()));
+            imageProcessor.setThresholds(Double.parseDouble(hueMin1.getText()), Double.parseDouble(hueMax1.getText()), Double.parseDouble(hueMin2.getText()), Double.parseDouble(hueMax2.getText()), Double.parseDouble(satMin.getText()), Double.parseDouble(satMax.getText()), Double.parseDouble(valMin.getText()), Double.parseDouble(valMax.getText()));
         }
     }
 
@@ -147,12 +149,12 @@ public class Controller implements Initializable {
                     captureThread = new Thread() {
                         Image tmp;
 
-                        FrameBuffer frameBuffer = new FrameBuffer(Integer.parseInt(frameWidthFld.getText()), Integer.parseInt(frameHeightFld.getText()));
+                        FrameBuffer frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()),Integer.parseInt(frameWidthFld.getText()), Integer.parseInt(frameHeightFld.getText()));
 
                         @Override
                         public void run() {
                             if (!theta_text.getText().isEmpty() && !fi_text.getText().isEmpty() && !h_text.getText().isEmpty() && !alfa_fld.getText().isEmpty() && !shaft_x_fld.getText().isEmpty() && !shaft_y_fld.getText().isEmpty())
-                                fs.setVars(Double.parseDouble(theta_text.getText()), Double.parseDouble(fi_text.getText()), Double.parseDouble(alfa_fld.getText()), Double.parseDouble(h_text.getText()), Double.parseDouble(shaft_x_fld.getText()), Double.parseDouble(shaft_y_fld.getText()));
+                                formulaSolver.setVars(Double.parseDouble(theta_text.getText()), Double.parseDouble(fi_text.getText()), Double.parseDouble(alfa_fld.getText()), Double.parseDouble(h_text.getText()), Double.parseDouble(shaft_x_fld.getText()), Double.parseDouble(shaft_y_fld.getText()));
                             while (!interrupted()) {
                                 tmp = grabFrame(frameBuffer);
                                 Platform.runLater(new Runnable() {
@@ -209,14 +211,14 @@ public class Controller implements Initializable {
                         SerialWriter.rotate(456);
                     mask = getMotions(frame);
                 }
-                coords = ip2.findDots(frame,mask);
+                coords = imageProcessor.findDots(frame,mask);
                 imageToShow = mat2Image(frame);
                 if (takeShoot) {
                     if (!rotated && isScanning)
                         nextScan();
-                    fullCoords = fs.getCoordinates(coords, angle);
+                    fullCoords = formulaSolver.getCoordinates(coords, angle);
                     if (fullCoords != null)
-                        fm.appendToFile(fullCoords);
+                        fileManager.appendToFile(fullCoords);
                     else System.out.println("Null full coordinates");
                     takeShoot = false;
                 }
@@ -294,8 +296,9 @@ public class Controller implements Initializable {
         int steps = 0;
         if (!delta_angle_fld.getText().isEmpty()) {
             steps = Integer.parseInt(delta_angle_fld.getText());
+        } else {
+            return;
         }
-        else return;
         SerialWriter.rotate(steps);
         angle += (double) steps * 360 / 456;
         Platform.runLater(new Runnable() {

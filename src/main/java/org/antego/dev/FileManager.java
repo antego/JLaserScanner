@@ -21,13 +21,6 @@ public class FileManager {
         createFile();
     }
 
-    public static void main(String... args) {
-        FileManager fm = new FileManager();
-        fm.appendToFile(new double[][]{{23}});
-        fm.appendToFile(new double[][]{{23}});
-        fm.appendToFile(new double[][]{{23}});
-    }
-
     private void createFile() {
         try {
             path = Paths.get(fileName + number+".XYZ");

@@ -8,12 +8,18 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
    <children>
       <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
       <VBox layoutX="675.0" layoutY="14.0">
          <children>
-            <Button fx:id="start_btn" layoutX="717.0" layoutY="14.0" mnemonicParsing="false" onAction="#startCamera" prefHeight="37.0" prefWidth="200.0" text="Start camera">
+            <HBox prefHeight="29.0" prefWidth="215.0">
+               <children>
+                  <Label text="Camera id:" />
+                  <TextField fx:id="camIdFld" prefHeight="37.0" prefWidth="109.0" text="0" />
+               </children>
+            </HBox>
+            <Button fx:id="start_btn" layoutX="717.0" layoutY="14.0" mnemonicParsing="false" onAction="#startCamera" prefHeight="37.0" prefWidth="138.0" text="Start camera">
                <VBox.margin>
                   <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                </VBox.margin>
@@ -21,7 +27,7 @@
             <HBox prefHeight="51.0" prefWidth="215.0">
                <children>
                   <Label text="Width" />
-                  <TextField fx:id="frameWidthFld" prefHeight="10.0" prefWidth="45.0" text="640" />
+                  <TextField fx:id="frameWidthFld" prefWidth="45.0" text="640" />
                   <Label text="Height" />
                   <TextField fx:id="frameHeightFld" prefHeight="12.0" prefWidth="56.0" text="480" />
                </children>

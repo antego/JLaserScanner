@@ -9,7 +9,7 @@ import org.opencv.imgproc.Imgproc;
 /**
  * Created by anton on 16.03.2015.
  */
-public class ImageProcessor2 {
+public class ImageProcessor {
     public static final int THRESHOLD = 250;
     double hue2Min = 0;
     double hue2Max = 10;

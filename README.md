@@ -14,13 +14,15 @@ mvn install:install-file \
   -DgeneratePom=true 
 ```
 native library:
-    mvn install:install-file \
-      -Dfile=<path to opencv native lib (.so or .dll)> \
-      -DgroupId=org.opencv \
-      -DartifactId=<"libopencv_native" for linux and "opencv_native" for windows> \
-      -Dversion=<version of opencv lib> \
-      -Dpackaging=<.so for linux and .dll for windows> \
-      -DgeneratePom=true 
+```
+mvn install:install-file \
+  -Dfile=**<path to opencv native lib (.so or .dll)>** \
+  -DgroupId=org.opencv \
+  -DartifactId=<"libopencv_native" for linux and "opencv_native" for windows> \
+  -Dversion=<version of opencv lib> \
+  -Dpackaging=<.so for linux and .dll for windows> \
+  -DgeneratePom=true 
+```
 2. Check opencv dependencies versions in `pom.xml`. 
 3. Now you can build and test project with maven, just go into project directory and execute corresponding maven goals.
 

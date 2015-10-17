@@ -9,9 +9,6 @@ public class SerialWriter {
     static SerialPort serialPort;
     static Controller controller;
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         String[] portNames = SerialPortList.getPortNames();
         for (int i = 0; i < portNames.length; i++) {
@@ -19,14 +16,9 @@ public class SerialWriter {
         }
     }
 
-//    public static void setController(Controller controller) {
-//        ccontroller = controller;
-//    }
-
     public static boolean disconnect() {
         try {
             serialPort.closePort();
-            //ccontroller.setPortLabel("Disconnected");
             return true;
         } catch (SerialPortException ex) {
             ex.printStackTrace();
@@ -76,13 +68,11 @@ public class SerialWriter {
             ex.printStackTrace();
             return false;
         }
-        //ccontroller.setPortLabel("Connected");
         return true;
     }
 
     static class SerialPortReader implements SerialPortEventListener {
         StringBuilder message = new StringBuilder();
-
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 try {
@@ -110,13 +100,11 @@ public class SerialWriter {
                 }
             }
         }
-
     }
 
 
     public static String[] getPorts() {
         String[] portNames = SerialPortList.getPortNames();
-
         for (int i = 0; i < portNames.length; i++) {
             System.out.println(portNames[i]);
         }

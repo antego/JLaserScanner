@@ -43,9 +43,6 @@ public class ImageProcessor2 {
 
     public synchronized double[] findDots(Mat frame, Mat mask) {
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HSV);
-        double[] minValues = new double[]{12, 23, 23};
-        double[] maxValues = new double[]{12, 23, 23};
-
         Mat part1 = new Mat();
         Mat part2 = new Mat();
         Mat result = new Mat();
@@ -53,8 +50,9 @@ public class ImageProcessor2 {
         Core.inRange(frame, new Scalar(hue2Min, satMin, valMin), new Scalar(hue2Max, satMax, valMax), part1);
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_HSV2BGR);
         Core.add(part1, part2, result);
-        if(mask == null)
+        if(mask == null) {
             mask = new Mat(result.size(), CvType.CV_8UC1, new Scalar(255));
+        }
         Core.bitwise_and(result,mask,result);
 
         int count = 0;
@@ -70,7 +68,6 @@ public class ImageProcessor2 {
                     if (result.get(j, k)[0] > THRESHOLD) {
                         //массив координат х ов больше 230
                         coords[count] = k;
-//                        coords[count][1] = frame.get(j, k)[2];
                         count++;
                     }
                 }
@@ -81,14 +78,14 @@ public class ImageProcessor2 {
                     median[j] = coords[coords.length / 2];
                 }
                 //make choosen dot red
-
                 frame.put(j, (int) median[j], new double[]{0, 0, 0});
 
             } else median[j] = -1;
             count = 0;
-
         }
-        if (showRawImg) result.copyTo(frame);
+        if (showRawImg) {
+            result.copyTo(frame);
+        }
         return median;
     }
 }

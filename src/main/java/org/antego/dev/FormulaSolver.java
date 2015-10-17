@@ -1,19 +1,11 @@
 package org.antego.dev;
 
-import javafx.collections.ObservableList;
-import javafx.scene.control.TableView;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-
 /**
  * Created by anton on 10.03.2015.
  */
 public class FormulaSolver {
     boolean manual_mode;
     boolean valuesSetted = false;
-    //    double tanTheta;
-//    double tanFi;
     double h;
     double a_man;
     double b_man;
@@ -22,30 +14,10 @@ public class FormulaSolver {
     double tan_alfa;
     double shaft_x;
     double shaft_y;
-    ArrayList<Measure> measures;
-
-
-    public FormulaSolver(ArrayList<Measure> data) {
-        this.measures = data;
-    }
-
 
     public void setMode(boolean manual_mode) {
         this.manual_mode = manual_mode;
     }
-
-    public synchronized double getDistance(double[] coords) {
-        if (coords != null)
-            return distance(coords[0]);
-        else return 0;
-    }
-
-//    public double getDistance(double[] coords, double fi, double th, double h) {
-//        this.setVars(th, fi, h);
-//        if (coords != null)
-//            return distance(coords[0]);
-//        else return 0;
-//    }
 
     public void setVars(double th, double fi, double alfa, double h, double shaft_x, double shaft_y) {
         manual_mode = true;
@@ -74,7 +46,9 @@ public class FormulaSolver {
 
             }
             return turnProfile(profileCoords, Math.toRadians(angle));
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
 
@@ -88,32 +62,16 @@ public class FormulaSolver {
                 newCoords[i][2] = coords[i][2];
             }
             return newCoords;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     private synchronized double distance(double x) {
-        if (manual_mode)
+        if (manual_mode) {
             return 1 / (b_man + a_man * (FrameBuffer.frameWidth / 2 - x) / (FrameBuffer.frameWidth / 2));
-        else return 1 / (b_auto + a_auto * (FrameBuffer.frameWidth / 2 - x) / (FrameBuffer.frameWidth / 2));
-    }
-
-    public synchronized void addMeasure() {
-//        measures.add(m);
-        double[] coefs = Quadr.findCoefs(measures);
-        System.out.println("After add a: " + coefs[0] + "b: " + coefs[1]);
-        a_auto = coefs[0];
-        b_auto = coefs[1];
-    }
-
-    public synchronized void deleteMeasure() {
-//        Iterator<Measure> i = measures.iterator();
-//        while (i.hasNext()) {
-//            Measure meas = i.next();
-//            if(meas.getX() == m.getX()) measures.remove(meas);
-//        }
-        double[] coefs = Quadr.findCoefs(measures);
-        System.out.println("After delete a: " + coefs[0] + "b: " + coefs[1]);
-        a_auto = coefs[0];
-        b_auto = coefs[1];
+        } else {
+            return 1 / (b_auto + a_auto * (FrameBuffer.frameWidth / 2 - x) / (FrameBuffer.frameWidth / 2));
+        }
     }
 }

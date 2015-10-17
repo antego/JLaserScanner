@@ -1,30 +1,24 @@
 package org.antego.dev;
 
-import com.sun.prism.impl.Disposer;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
-import org.opencv.core.*;
+import org.opencv.core.Mat;
+import org.opencv.core.Core;
+import org.opencv.core.Size;
+import org.opencv.core.Scalar;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.CvType;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -36,17 +30,8 @@ public class Controller implements Initializable {
     private TextField frameHeightFld;
     @FXML
     private ImageView currentFrame;
-    //display coordinates
-//    @FXML
-//    private Label coords_lbl;
-    //display distance
-//    @FXML
-//    private Label dist_lbl;
-    //calibration method choose
     @FXML
     private RadioButton manual_rd;
-    @FXML
-    private RadioButton auto_rd;
     //manual method fields
     @FXML
     private Pane manual_pane;
@@ -65,12 +50,6 @@ public class Controller implements Initializable {
     //auto method fields
     @FXML
     private Pane auto_pane;
-    @FXML
-    private TextField dist_fld;
-    @FXML
-    private Button addmeasure_btn;
-    @FXML
-    private TableView table_view;
     @FXML
     private TextField delta_angle_fld;
     @FXML
@@ -98,13 +77,9 @@ public class Controller implements Initializable {
 
     private volatile boolean takeShoot;
     private Double angle = new Double(0);
-    //    private double[] x;
     private Pane rootElement;
     private Thread captureThread;
-    private ObservableList<Measure> data =
-            FXCollections.observableArrayList();
-    private ArrayList<Measure> measures = new ArrayList<>();
-    private FormulaSolver fs = new FormulaSolver(measures);
+    private FormulaSolver fs = new FormulaSolver();
     private FileManager fm = new FileManager();
     private ImageProcessor2 ip2 = new ImageProcessor2();
     private volatile boolean isScanning = false;
@@ -117,6 +92,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //TODO choose ports
         SerialWriter.setConnection("/dev/ttyACM0", this);
         auto_pane.setVisible(false);
         manual_pane.setVisible(true);
@@ -129,36 +105,6 @@ public class Controller implements Initializable {
         satMin.setText(thresholds[4] + "");
         satMax.setText(thresholds[5] + "");
         valMin.setText(thresholds[6] + "");
-        valMax.setText(thresholds[7] + "");
-        TableColumn<Measure, String> firstName = new TableColumn<Measure, String>("Dist");
-        TableColumn<Measure, String> lastName = new TableColumn<Measure, String>("X");
-        firstName.setCellValueFactory(new PropertyValueFactory<Measure, String>("distantion"));
-        lastName.setCellValueFactory(new PropertyValueFactory<Measure, String>("x"));
-        table_view.getColumns().add(firstName);
-        table_view.getColumns().add(lastName);
-        //Insert Button
-        TableColumn col_action = new TableColumn<>("Delete");
-        table_view.getColumns().add(col_action);
-        col_action.setCellValueFactory(
-                new Callback<TableColumn.CellDataFeatures<Disposer.Record, Boolean>,
-                        ObservableValue<Boolean>>() {
-
-                    @Override
-                    public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Disposer.Record, Boolean> p) {
-                        return new SimpleBooleanProperty(p.getValue() != null);
-                    }
-                });
-
-        //Adding the Button to the cell
-        col_action.setCellFactory(
-                new Callback<TableColumn<Disposer.Record, Boolean>, TableCell<Disposer.Record, Boolean>>() {
-
-                    @Override
-                    public TableCell<Disposer.Record, Boolean> call(TableColumn<Disposer.Record, Boolean> p) {
-                        return new ButtonCell();
-                    }
-                });
-        table_view.setItems(data);
     }
 
     @FXML
@@ -180,23 +126,13 @@ public class Controller implements Initializable {
         ip2.setShowRawImg(rawImg_checkbox.isSelected());
     }
 
-    //todo get x value
-    @FXML
-    protected void addMeasure(ActionEvent event) {
-//        if(x != null) {
-//
-////            measures.add(new Measure(Double.parseDouble(dist_fld.getText()), x));
-//            fs.addMeasure();
-//            data.setAll(measures);
-////            fs.addMeasure(new Measure(Double.parseDouble(dist_fld.getText()), x));
-//        }
-    }
-
     @FXML
     protected void applyThresholdsClick(ActionEvent event) {
-        if (hueMin1.getText() != null && hueMin2 != null && hueMax1 != null && hueMax2 != null && satMin != null && satMax != null && valMin != null && valMax != null)
+        if (hueMin1.getText() != null && hueMin2 != null && hueMax1 != null && hueMax2 != null && satMin != null && satMax != null && valMin != null && valMax != null) {
             ip2.setThresholds(Double.parseDouble(hueMin1.getText()), Double.parseDouble(hueMax1.getText()), Double.parseDouble(hueMin2.getText()), Double.parseDouble(hueMax2.getText()), Double.parseDouble(satMin.getText()), Double.parseDouble(satMax.getText()), Double.parseDouble(valMin.getText()), Double.parseDouble(valMax.getText()));
+        }
     }
+
 
 
     @FXML
@@ -205,7 +141,6 @@ public class Controller implements Initializable {
         if (rootElement != null) {
             start_btn.setText("Stop Camera");
             manual_pane.setDisable(true);
-//            auto_pane.setDisable(false);
             // get the ImageView object for showing the video stream
             if (captureThread == null || !captureThread.isAlive()) {
                 try {
@@ -253,9 +188,8 @@ public class Controller implements Initializable {
 
     private Image grabFrame(FrameBuffer fb) {
         //init
-        final StringBuilder sb;
         Image imageToShow = null;
-        Mat frame = new Mat();
+        Mat frame;
 
         final double[] coords;
         double[][] fullCoords;
@@ -275,13 +209,7 @@ public class Controller implements Initializable {
                         SerialWriter.rotate(456);
                     mask = getMotions(frame);
                 }
-
                 coords = ip2.findDots(frame,mask);
-//                if (coords != null) {
-//                    x = coords;
-//                } else {
-//                    x = null;
-//                }
                 imageToShow = mat2Image(frame);
                 if (takeShoot) {
                     if (!rotated && isScanning)
@@ -334,8 +262,9 @@ public class Controller implements Initializable {
     @FXML
     protected void takeShoot() {
         int steps = 1;
-        if (!delta_angle_fld.getText().isEmpty())
+        if (!delta_angle_fld.getText().isEmpty()) {
             steps = Integer.parseInt(delta_angle_fld.getText());
+        }
         SerialWriter.rotate(steps);
         angle += (double) steps * 360 / 456;
         overall_angle_lbl.setText(angle.toString());
@@ -351,21 +280,21 @@ public class Controller implements Initializable {
             angle = 0.0;
             first = true;
         } else {
-            if (delta_angle_fld.getText().isEmpty())
+            if (delta_angle_fld.getText().isEmpty()) {
                 return;
+            }
             start_btn.setDisable(true);
             delta_angle_fld.setDisable(true);
             startScanBtn.setText("Stop scan");
             motionDetection = true;
-//            isScanning = true;
-//            setTakeShoot(true);
         }
     }
 
     private void nextScan() {
         int steps = 0;
-        if (!delta_angle_fld.getText().isEmpty())
+        if (!delta_angle_fld.getText().isEmpty()) {
             steps = Integer.parseInt(delta_angle_fld.getText());
+        }
         else return;
         SerialWriter.rotate(steps);
         angle += (double) steps * 360 / 456;
@@ -384,8 +313,9 @@ public class Controller implements Initializable {
             isScanning = true;
             takeShoot = true;
             Highgui.imwrite("Mask.png",mask);
-        } else
+        } else {
             takeShoot = ts;
+        }
     }
 
 
@@ -401,36 +331,4 @@ public class Controller implements Initializable {
     public void setRootElement(Pane root) {
         rootElement = root;
     }
-
-    private class ButtonCell extends TableCell<Disposer.Record, Boolean> {
-        final Button cellButton = new Button("Delete");
-
-        ButtonCell() {
-            //Action when the button is pressed
-            cellButton.setOnAction(new EventHandler<ActionEvent>() {
-
-                @Override
-                public void handle(ActionEvent t) {
-                    // get Selected Item
-                    Measure currentMeasure = (Measure) ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
-                    //remove selected item from the table list
-                    measures.remove(currentMeasure);
-                    fs.deleteMeasure();
-                    data.setAll(measures);
-//                    fs.deleteMeasure(currentMeasure);
-//                    fs.deleteMeasure(currentMeasure.getDistantion());
-                }
-            });
-        }
-
-        //Display button if the row is not empty
-        @Override
-        protected void updateItem(Boolean t, boolean empty) {
-            super.updateItem(t, empty);
-            if (!empty) {
-                setGraphic(cellButton);
-            }
-        }
-    }
-
 }

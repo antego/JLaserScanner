@@ -5,18 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.opencv.core.Core;
-import org.opencv.highgui.Highgui;
+
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainWindow.fxml"));
-        AnchorPane root = (AnchorPane) loader.load();
+        AnchorPane root = loader.load();
         Controller controller = loader.getController();
         primaryStage.setTitle("Laser Scanner");
-        primaryStage.setScene(new Scene(root, 900, 550));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
         controller.setRootElement(root);
     }

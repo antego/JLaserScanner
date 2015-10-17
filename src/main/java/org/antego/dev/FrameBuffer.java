@@ -26,13 +26,6 @@ public class FrameBuffer {
             if(System.currentTimeMillis() - start_time > 3000)
                 throw new Exception("camera doesn't opened");
         }
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        camera.set(Highgui.CV_CAP_PROP_BUFFERSIZE, 3);
-//        FrameFetcher frameFetcher = new FrameFetcher();
         t = new Thread(new FrameFetcher(camera, frame));
         t.start();
     }
@@ -44,20 +37,14 @@ public class FrameBuffer {
     public Mat getFrame() {
         return frame.clone();
     }
-//    public void setFrame(Mat frame) {
-//        this.frame = frame;
-//    }
 
     private static class FrameFetcher implements Runnable {
         public volatile Mat lastFrame = new Mat();
         VideoCapture camera;
-        long start_time;
-
         public FrameFetcher(VideoCapture camera, Mat frame) {
             this.camera = camera;
             lastFrame = frame;
         }
-
         public void run() {
             while (!Thread.interrupted())
                 if (!camera.read(lastFrame))

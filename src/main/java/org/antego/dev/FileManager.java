@@ -1,6 +1,9 @@
 package org.antego.dev;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +16,6 @@ public class FileManager {
     Path path;
     String fileName = "scan";
     int number;
-//    File file;
 
     FileManager() {
         createFile();
@@ -29,9 +31,6 @@ public class FileManager {
     private void createFile() {
         try {
             path = Paths.get(fileName + number+".XYZ");
-
-//            Files.createDirectories(path.getParent());
-
             try {
                 Files.createFile(path);
             } catch (FileAlreadyExistsException e) {
@@ -54,7 +53,7 @@ public class FileManager {
                 }
                 out.print(sb);
             }catch (IOException e) {
-                //exception handling left as an exercise for the reader
+                //TODO exception handling
             }
         }
     }

@@ -8,7 +8,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
    <children>
       <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
       <VBox layoutX="675.0" layoutY="14.0">
@@ -21,9 +21,9 @@
             <HBox prefHeight="51.0" prefWidth="215.0">
                <children>
                   <Label text="Width" />
-                  <TextField fx:id="frameWidthFld" prefHeight="37.0" prefWidth="45.0" text="640" />
+                  <TextField fx:id="frameWidthFld" prefHeight="10.0" prefWidth="45.0" text="640" />
                   <Label text="Height" />
-                  <TextField fx:id="frameHeightFld" prefHeight="37.0" prefWidth="56.0" text="480" />
+                  <TextField fx:id="frameHeightFld" prefHeight="12.0" prefWidth="56.0" text="480" />
                </children>
             </HBox>
             <TabPane prefHeight="364.0" prefWidth="215.0" tabClosingPolicy="UNAVAILABLE">
@@ -41,7 +41,7 @@
                                  <children>
                                     <Pane fx:id="manual_pane" prefHeight="218.0" prefWidth="208.0">
                                        <children>
-                                          <GridPane prefHeight="218.0" prefWidth="208.0">
+                                          <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="208.0">
                                              <columnConstraints>
                                                 <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
                                                 <ColumnConstraints />
@@ -49,15 +49,15 @@
                                                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="10.0" prefWidth="108.0" />
                                              </columnConstraints>
                                              <rowConstraints>
-                                                <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="48.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="58.0" minHeight="4.0" prefHeight="32.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="61.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+                                                <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
-                                                <TextField fx:id="fi_text" layoutX="780.0" layoutY="132.0" prefHeight="14.0" prefWidth="49.0" GridPane.columnIndex="3">
+                                                <TextField fx:id="fi_text" layoutX="780.0" layoutY="132.0" prefHeight="0.0" prefWidth="108.0" GridPane.columnIndex="3">
                                                    <VBox.margin>
                                                       <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                                    </VBox.margin>
@@ -65,8 +65,8 @@
                                                 <Label text="Fi, deg" />
                                                 <Label text="Theta, deg" GridPane.rowIndex="1" />
                                                 <Label text="H, cm" GridPane.rowIndex="3" />
-                                                <TextField fx:id="h_text" prefHeight="37.0" prefWidth="97.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                                <TextField fx:id="theta_text" prefHeight="37.0" prefWidth="97.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                                <TextField fx:id="h_text" prefHeight="5.0" prefWidth="108.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                                <TextField fx:id="theta_text" prefHeight="0.0" prefWidth="108.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                                 <Label text="Shaft X, cm" GridPane.rowIndex="4" />
                                                 <Label text="Shaft Y, cm" GridPane.rowIndex="5" />
                                                 <TextField fx:id="shaft_x_fld" GridPane.columnIndex="3" GridPane.rowIndex="4" />

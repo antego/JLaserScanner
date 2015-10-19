@@ -45,7 +45,7 @@
                               </Label>
                               <AnchorPane layoutY="95.0" prefHeight="144.0" prefWidth="208.0">
                                  <children>
-                                    <Pane fx:id="manual_pane" prefHeight="218.0" prefWidth="208.0">
+                                    <Pane fx:id="manual_pane" prefHeight="186.0" prefWidth="208.0">
                                        <children>
                                           <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="208.0">
                                              <columnConstraints>
@@ -86,54 +86,14 @@
                                           </GridPane>
                                        </children>
                                     </Pane>
-                                    <Pane fx:id="auto_pane" disable="true" layoutX="-1.0" prefHeight="150.0" prefWidth="208.0" visible="false" AnchorPane.topAnchor="0.0">
-                                       <children>
-                                          <Pane layoutY="2.0">
-                                             <children>
-                                                <GridPane layoutY="6.0" prefHeight="25.0" prefWidth="208.0">
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <children>
-                                                      <Label text="Distance, cm." />
-                                                      <TextField fx:id="dist_fld" prefHeight="37.0" prefWidth="101.0" GridPane.columnIndex="1" />
-                                                   </children>
-                                                   <VBox.margin>
-                                                      <Insets bottom="8.0" top="8.0" />
-                                                   </VBox.margin>
-                                                </GridPane>
-                                                <Button fx:id="addmeasure_btn" alignment="CENTER_RIGHT" layoutX="46.0" layoutY="43.0" mnemonicParsing="false" onAction="#addMeasure" text="Add measure">
-                                                   <VBox.margin>
-                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                                   </VBox.margin>
-                                                </Button>
-                                             </children>
-                                          </Pane>
-                                          <TableView fx:id="table_view" layoutY="92.0" prefHeight="138.0" prefWidth="208.0" />
-                                       </children>
-                                       <padding>
-                                          <Insets top="8.0" />
-                                       </padding>
-                                    </Pane>
                                  </children>
                               </AnchorPane>
-                              <RadioButton fx:id="auto_rd" disable="true" layoutX="4.0" layoutY="66.0" mnemonicParsing="false" onAction="#modeAuto" text="Auto colibration">
-                                 <toggleGroup>
-                                    <ToggleGroup fx:id="colibration" />
-                                 </toggleGroup>
-                                 <VBox.margin>
-                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                 </VBox.margin>
-                              </RadioButton>
-                              <RadioButton fx:id="manual_rd" layoutX="4.0" layoutY="33.0" mnemonicParsing="false" onAction="#modeManual" selected="true" text="Manual values" toggleGroup="$colibration">
-                                 <VBox.margin>
-                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                 </VBox.margin>
-                              </RadioButton>
+                              <HBox layoutX="4.0" layoutY="279.0" prefHeight="37.0" prefWidth="200.0">
+                                 <children>
+                                    <Label text="Port name" />
+                                    <ComboBox fx:id="portNameComboBox" prefHeight="37.0" prefWidth="124.0" />
+                                 </children>
+                              </HBox>
                            </children>
                         </AnchorPane>
                      </content>
@@ -168,17 +128,16 @@
                   </Tab>
                </tabs>
             </TabPane>
-            <AnchorPane fx:id="profile_pane">
+            <AnchorPane fx:id="profile_pane" prefHeight="112.0" prefWidth="215.0">
                <children>
                   <TextField fx:id="delta_angle_fld" layoutX="105.0" layoutY="14.0" prefHeight="37.0" prefWidth="89.0" />
-                  <Button fx:id="take_profile_btn" layoutX="-1.0" layoutY="69.0" mnemonicParsing="false" onAction="#takeShoot" text="Take profile" />
                   <Label layoutX="13.0" layoutY="14.0" text="Angle, deg">
                      <VBox.margin>
                         <Insets top="8.0" />
                      </VBox.margin>
                   </Label>
                   <Label fx:id="overall_angle_lbl" layoutX="13.0" layoutY="39.0" />
-                  <Button fx:id="startScanBtn" layoutX="124.0" layoutY="69.0" mnemonicParsing="false" onAction="#startScan" text="Start scan" />
+                  <Button fx:id="startScanBtn" layoutX="62.0" layoutY="53.0" mnemonicParsing="false" onAction="#startScan" text="Start scan" />
                </children>
             </AnchorPane>
          </children>

@@ -41,7 +41,7 @@ public class ImageProcessor {
         this.showRawImg = showRawImg;
     }
 
-    public synchronized double[] findDots(Mat frame, Mat mask) {
+    public synchronized double[] findDots(Mat frame) {
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HSV);
         Mat part1 = new Mat();
         Mat part2 = new Mat();
@@ -50,10 +50,6 @@ public class ImageProcessor {
         Core.inRange(frame, new Scalar(hue2Min, satMin, valMin), new Scalar(hue2Max, satMax, valMax), part1);
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_HSV2BGR);
         Core.add(part1, part2, result);
-        if(mask == null) {
-            mask = new Mat(result.size(), CvType.CV_8UC1, new Scalar(255));
-        }
-        Core.bitwise_and(result,mask,result);
 
         int count = 0;
         double[] median = new double[FrameBuffer.frameHeight];

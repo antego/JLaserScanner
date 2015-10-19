@@ -22,7 +22,7 @@ Program for 3D-scanning written in java
         -DgroupId=org.opencv \
         -DartifactId=<"libopencv_native" for linux and "opencv_native" for windows> \
         -Dversion=<version of opencv lib> \
-        -Dpackaging=<.so for linux and .dll for windows> \
+        -Dpackaging=<so for linux and dll for windows> \
         -DgeneratePom=true 
     ```
 2. Check opencv dependencies versions in `pom.xml`. 

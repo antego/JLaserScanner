@@ -3,20 +3,26 @@ package org.antego.dev; /**
  */
 
 import javafx.application.Platform;
-import jssc.*;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
 
 public class SerialWriter {
-    static SerialPort serialPort;
-    static Controller controller;
+    SerialPort serialPort;
+    Controller controller;
 
-    public static void main(String[] args) {
-        String[] portNames = SerialPortList.getPortNames();
-        for (int i = 0; i < portNames.length; i++) {
-            System.out.println(portNames[i]);
-        }
+    public SerialWriter(String port, Controller controller) throws SerialPortException {
+        this.controller = controller;
+        serialPort = new SerialPort(port);
+        System.out.println("Port opened: " + serialPort.openPort());
+        System.out.println("Params setted: " + serialPort.setParams(9600, 8, 1, 0, true, false));
+        int mask = SerialPort.MASK_RXCHAR;
+        serialPort.setEventsMask(mask);
+        serialPort.addEventListener(new SerialPortReader());
     }
 
-    public static boolean disconnect() {
+    public boolean disconnect() {
         try {
             serialPort.closePort();
             return true;
@@ -26,27 +32,7 @@ public class SerialWriter {
         }
     }
 
-    public static boolean scan() {
-        try {
-            return serialPort.writeString("s");
-        } catch (SerialPortException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-
-    }
-
-    public static boolean stopScan() {
-        try {
-            return serialPort.writeString("c");
-        } catch (SerialPortException ex) {
-            ex.printStackTrace();
-            return false;
-        }
-
-    }
-
-    public static boolean rotate(int steps) {
+    public boolean rotate(int steps) {
         try {
             return serialPort.writeString("r" + steps + "\r\n");
         } catch (SerialPortException ex) {
@@ -55,23 +41,7 @@ public class SerialWriter {
         }
     }
 
-    public static boolean setConnection(String port, Controller controller) {
-        SerialWriter.controller = controller;
-        serialPort = new SerialPort(port);
-        try {
-            System.out.println("Port opened: " + serialPort.openPort());
-            System.out.println("Params setted: " + serialPort.setParams(9600, 8, 1, 0, true, false));
-            int mask = SerialPort.MASK_RXCHAR;
-            serialPort.setEventsMask(mask);
-            serialPort.addEventListener(new SerialPortReader());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    static class SerialPortReader implements SerialPortEventListener {
+    class SerialPortReader implements SerialPortEventListener {
         StringBuilder message = new StringBuilder();
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
@@ -94,20 +64,12 @@ public class SerialWriter {
                             if (b != '\n' && b != '\r') message.append((char) b);
                         }
                     }
-                } catch (Exception ex) {
-                    System.out.println(ex);
-                    System.out.println("serialEvent");
+                } catch (SerialPortException ex) {
+                    ex.printStackTrace();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
-    }
-
-
-    public static String[] getPorts() {
-        String[] portNames = SerialPortList.getPortNames();
-        for (int i = 0; i < portNames.length; i++) {
-            System.out.println(portNames[i]);
-        }
-        return portNames;
     }
 }

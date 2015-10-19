@@ -13,13 +13,13 @@ public class FrameBuffer {
     VideoCapture camera;
     Thread t ;
 
-    public FrameBuffer(int camId, int frameWidth, int frameHeight) throws Exception{
+    public FrameBuffer(int camId, int frameWidth, int frameHeight) throws CameraNotOpenedException{
         camera = new VideoCapture(camId);
         long start_time = System.currentTimeMillis();
         //maybe faster check with .isOpen()
         while (!camera.isOpened()) {
             if(System.currentTimeMillis() - start_time > 1000)
-                throw new Exception("Camera " + camId + " doesn't opened, try different id.");
+                throw new CameraNotOpenedException("Can't open camera " + camId + ", check that camera connected and try another id.");
         }
         FrameBuffer.frameWidth = frameWidth;
         FrameBuffer.frameHeight = frameHeight;
@@ -52,6 +52,25 @@ public class FrameBuffer {
                 }
             }
             camera.release();
+        }
+    }
+
+    public static class CameraNotOpenedException extends Exception {
+        /*
+        If a constructor does not explicitly invoke a superclass constructor,
+        the Java compiler automatically inserts a call to the no-argument constructor of the superclass.*/
+        public CameraNotOpenedException(){
+        }
+
+        public CameraNotOpenedException(String m) {
+            super(m);
+        }
+
+        public CameraNotOpenedException(Throwable t) {
+            super(t);
+        }
+        public CameraNotOpenedException(String m, Throwable t) {
+            super(m, t);
         }
     }
 }

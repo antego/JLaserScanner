@@ -51,12 +51,7 @@ public class SerialWriter {
                         if ((b == '\r' || b == '\n') && message.length() > 0) {
                             if (message.toString().contentEquals("r:Done")) {
                                 Thread.sleep(1000);
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        controller.setTakeShoot(true);
-                                    }
-                                });
+                                Platform.runLater(() -> controller.setTakeShoot(true));
                             }
                             System.out.println(message.toString());
                             message.setLength(0);

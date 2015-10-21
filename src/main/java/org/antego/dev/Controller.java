@@ -101,12 +101,11 @@ public class Controller implements Initializable {
         satMax.setText(thresholds[5] + "");
         valMin.setText(thresholds[6] + "");
 
-        portNameComboBox.setOnShowing(new EventHandler<Event>() {
-            public void handle(Event event) {
+        portNameComboBox.setOnShowing(event -> {
                 portNameComboBox.getItems().clear();
                 portNameComboBox.getItems().addAll(SerialPortList.getPortNames());
             }
-        });
+        );
     }
 
 
@@ -216,12 +215,9 @@ public class Controller implements Initializable {
                 formulaSolver.setVars(Double.parseDouble(theta_text.getText()), Double.parseDouble(fi_text.getText()), Double.parseDouble(alfa_fld.getText()), Double.parseDouble(h_text.getText()), Double.parseDouble(shaft_x_fld.getText()), Double.parseDouble(shaft_y_fld.getText()));
             while (!interrupted()) {
                 tmp = grabFrame(frameBuffer);
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (captureThread != null)
-                            currentFrame.setImage(tmp);
-                    }
+                Platform.runLater(() -> {
+                    if (captureThread != null)
+                        currentFrame.setImage(tmp);
                 });
             }
             frameBuffer.stop();
@@ -262,8 +258,6 @@ public class Controller implements Initializable {
                 e.printStackTrace();
                 // log the error
                 System.err.println("ERROR: " + e.getMessage());
-            } finally {
-
             }
             return imageToShow;
         }
@@ -277,12 +271,16 @@ public class Controller implements Initializable {
             }
             serialWriter.rotate(steps);
             angle += (double) steps * 360 / 456;
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    overall_angle_lbl.setText(angle.toString());
-                }
-            });
+            Platform.runLater(() ->
+                    overall_angle_lbl.setText(angle.toString())
+            );
+        }
+    }
+
+    public void onClose() {
+        if (captureThread != null) {
+            captureThread.interrupt();
+            captureThread = null;
         }
     }
 }

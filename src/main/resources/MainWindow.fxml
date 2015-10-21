@@ -1,147 +1,274 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
+
+<Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
    <children>
-      <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-      <VBox layoutX="675.0" layoutY="14.0">
+      <HBox>
          <children>
-            <HBox prefHeight="29.0" prefWidth="215.0">
+            <VBox alignment="TOP_CENTER">
                <children>
-                  <Label text="Camera id:" />
-                  <TextField fx:id="camIdFld" prefHeight="37.0" prefWidth="109.0" text="0" />
+                  <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                  <CheckBox fx:id="rawImg_checkbox" mnemonicParsing="false" onAction="#rawImgClicked" text="Show processed image" />
                </children>
-            </HBox>
-            <Button fx:id="start_btn" layoutX="717.0" layoutY="14.0" mnemonicParsing="false" onAction="#startCamera" prefHeight="37.0" prefWidth="138.0" text="Start camera">
-               <VBox.margin>
-                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-               </VBox.margin>
-            </Button>
-            <HBox prefHeight="51.0" prefWidth="215.0">
+            </VBox>
+            <VBox alignment="CENTER" spacing="3.0">
                <children>
-                  <Label text="Width" />
-                  <TextField fx:id="frameWidthFld" prefWidth="45.0" text="640" />
-                  <Label text="Height" />
-                  <TextField fx:id="frameHeightFld" prefHeight="12.0" prefWidth="56.0" text="480" />
-               </children>
-            </HBox>
-            <TabPane prefHeight="364.0" prefWidth="215.0" tabClosingPolicy="UNAVAILABLE">
-               <tabs>
-                  <Tab closable="false" text="Colib">
-                     <content>
-                        <AnchorPane prefHeight="343.0" prefWidth="215.0">
-                           <children>
-                              <Label layoutX="4.0" text="Colibration">
-                                 <VBox.margin>
-                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <AnchorPane layoutY="95.0" prefHeight="144.0" prefWidth="208.0">
+                  <HBox prefHeight="29.0" prefWidth="215.0">
+                     <children>
+                        <Label text="Camera id">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="camIdFld" prefWidth="60.0" text="0">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Width">
+                           <padding>
+                              <Insets right="4.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="frameWidthFld" prefWidth="55.0" text="640">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding>
+                        </TextField>
+                        <Label text="Height">
+                           <padding>
+                              <Insets right="4.0" />
+                           </padding>
+                        </Label>
+                        <TextField fx:id="frameHeightFld" prefWidth="55.0" text="480">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <HBox>
+                     <children>
+                        <Label text="Port name">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <ComboBox fx:id="portNameComboBox">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="-4.0" left="-4.0" right="-4.0" top="-4.0" />
+                           </padding>
+                        </ComboBox>
+                     </children>
+                  </HBox>
+                  <Button fx:id="start_btn" alignment="CENTER" mnemonicParsing="false" onAction="#startCamera" text="Start camera">
+                     <VBox.margin>
+                        <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                     </VBox.margin>
+                  </Button>
+                  <TabPane tabClosingPolicy="UNAVAILABLE">
+                     <tabs>
+                        <Tab closable="false" text="Colib">
+                           <content>
+                              <AnchorPane>
                                  <children>
-                                    <Pane fx:id="manual_pane" prefHeight="186.0" prefWidth="208.0">
+                                    <Label text="Colibration">
+                                       <VBox.margin>
+                                          <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                       </VBox.margin>
+                                    </Label>
+                                    <GridPane layoutY="25.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="208.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints />
+                                          <ColumnConstraints maxWidth="87.0" minWidth="0.0" prefWidth="0.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="10.0" prefWidth="108.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints vgrow="SOMETIMES" />
+                                       </rowConstraints>
                                        <children>
-                                          <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="208.0">
-                                             <columnConstraints>
-                                                <ColumnConstraints minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints />
-                                                <ColumnConstraints maxWidth="87.0" minWidth="0.0" prefWidth="0.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="108.0" minWidth="10.0" prefWidth="108.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints maxHeight="58.0" minHeight="4.0" prefHeight="32.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="67.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="61.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="59.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="53.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                                                <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
-                                             </rowConstraints>
-                                             <children>
-                                                <TextField fx:id="fi_text" layoutX="780.0" layoutY="132.0" prefHeight="0.0" prefWidth="108.0" GridPane.columnIndex="3">
-                                                   <VBox.margin>
-                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                                   </VBox.margin>
-                                                </TextField>
-                                                <Label text="Fi, deg" />
-                                                <Label text="Theta, deg" GridPane.rowIndex="1" />
-                                                <Label text="H, cm" GridPane.rowIndex="3" />
-                                                <TextField fx:id="h_text" prefHeight="5.0" prefWidth="108.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                                <TextField fx:id="theta_text" prefHeight="0.0" prefWidth="108.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                <Label text="Shaft X, cm" GridPane.rowIndex="4" />
-                                                <Label text="Shaft Y, cm" GridPane.rowIndex="5" />
-                                                <TextField fx:id="shaft_x_fld" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                                                <Label text="Alfa, deg" GridPane.rowIndex="2" />
-                                                <TextField fx:id="alfa_fld" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                                <TextField fx:id="shaft_y_fld" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                                             </children>
+                                          <TextField fx:id="fi_text" layoutX="780.0" layoutY="132.0" GridPane.columnIndex="3">
                                              <VBox.margin>
-                                                <Insets bottom="8.0" top="4.0" />
+                                                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                              </VBox.margin>
-                                          </GridPane>
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Fi, deg" />
+                                          <Label text="Theta, deg" GridPane.rowIndex="1" />
+                                          <Label text="H, cm" GridPane.rowIndex="3" />
+                                          <TextField fx:id="h_text" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <TextField fx:id="theta_text" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Shaft X, cm" GridPane.rowIndex="4" />
+                                          <Label text="Shaft Y, cm" GridPane.rowIndex="5" />
+                                          <TextField fx:id="shaft_x_fld" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Alfa, deg" GridPane.rowIndex="2" />
+                                          <TextField fx:id="alfa_fld" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <TextField fx:id="shaft_y_fld" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
                                        </children>
-                                    </Pane>
+                                    </GridPane>
                                  </children>
                               </AnchorPane>
-                              <HBox layoutX="4.0" layoutY="279.0" prefHeight="37.0" prefWidth="200.0">
+                           </content>
+                        </Tab>
+                        <Tab closable="false" text="Detection">
+                            <content>
+                              <VBox alignment="CENTER" spacing="6.0">
                                  <children>
-                                    <Label text="Port name" />
-                                    <ComboBox fx:id="portNameComboBox" prefHeight="37.0" prefWidth="124.0" />
+                                    <Label text="Hue, 0 - 180" />
+                                    <HBox spacing="4.0">
+                                       <children>
+                                          <Label text="Min1">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="hueMin1" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Max1">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="hueMax1" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <HBox spacing="4.0">
+                                       <children>
+                                          <Label text="Min2">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="hueMin2" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Max2">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="hueMax2" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <Label text="Saturation, 0 - 255" />
+                                    <HBox spacing="4.0">
+                                       <children>
+                                          <Label text="Min">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="satMin" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Max">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="satMax" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <Label text="Value, 0 - 255" />
+                                    <HBox spacing="4.0">
+                                       <children>
+                                          <Label text="Min">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="valMin" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                          <Label text="Max">
+                                             <HBox.margin>
+                                                <Insets />
+                                             </HBox.margin>
+                                          </Label>
+                                          <TextField fx:id="valMax" prefWidth="60.0">
+                                             <padding>
+                                                <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                             </padding>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <Button mnemonicParsing="false" onAction="#applyThresholdsClick" text="Apply" />
                                  </children>
-                              </HBox>
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </Tab>
-                  <Tab closable="false" text="Detection">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <Label layoutX="14.0" layoutY="14.0" text="Hue, 0 - 180" />
-                              <TextField fx:id="hueMin1" layoutX="52.0" layoutY="39.0" prefHeight="37.0" prefWidth="47.0" />
-                              <TextField fx:id="hueMax1" layoutX="152.0" layoutY="39.0" prefHeight="37.0" prefWidth="52.0" />
-                              <Label layoutX="4.0" layoutY="39.0" text="Min1" />
-                              <Label layoutX="106.0" layoutY="39.0" text="Max1" />
-                              <TextField fx:id="hueMin2" layoutX="52.0" layoutY="89.0" prefHeight="37.0" prefWidth="47.0" />
-                              <TextField fx:id="hueMax2" layoutX="152.0" layoutY="89.0" prefHeight="37.0" prefWidth="52.0" />
-                              <Label layoutX="106.0" layoutY="89.0" text="Max2" />
-                              <Label layoutX="4.0" layoutY="89.0" text="Min2" />
-                              <Label layoutX="17.0" layoutY="135.0" text="Saturation, 0 - 255" />
-                              <TextField fx:id="satMax" layoutX="155.0" layoutY="160.0" prefHeight="37.0" prefWidth="52.0" />
-                              <TextField fx:id="satMin" layoutX="52.0" layoutY="160.0" prefHeight="37.0" prefWidth="47.0" />
-                              <Label layoutX="109.0" layoutY="160.0" text="Max" />
-                              <Label layoutX="7.0" layoutY="160.0" text="Min" />
-                              <Label layoutX="15.0" layoutY="217.0" text="Value, 0 - 255" />
-                              <Label layoutX="107.0" layoutY="242.0" text="Max" />
-                              <TextField fx:id="valMin" layoutX="53.0" layoutY="242.0" prefHeight="37.0" prefWidth="47.0" />
-                              <Label layoutX="5.0" layoutY="242.0" text="Min" />
-                              <TextField fx:id="valMax" layoutX="153.0" layoutY="242.0" prefHeight="37.0" prefWidth="52.0" />
-                              <Button layoutX="71.0" layoutY="289.0" mnemonicParsing="false" onAction="#applyThresholdsClick" text="Apply" />
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </Tab>
-               </tabs>
-            </TabPane>
-            <AnchorPane fx:id="profile_pane" prefHeight="112.0" prefWidth="215.0">
-               <children>
-                  <TextField fx:id="delta_angle_fld" layoutX="105.0" layoutY="14.0" prefHeight="37.0" prefWidth="89.0" />
-                  <Label layoutX="13.0" layoutY="14.0" text="Angle, deg">
-                     <VBox.margin>
-                        <Insets top="8.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label fx:id="overall_angle_lbl" layoutX="13.0" layoutY="39.0" />
-                  <Button fx:id="startScanBtn" layoutX="62.0" layoutY="53.0" mnemonicParsing="false" onAction="#startScan" text="Start scan" />
+                              </VBox>
+                            </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+                  <HBox>
+                     <children>
+                        <Label text="Angle, deg" />
+                        <TextField fx:id="delta_angle_fld" prefWidth="60.0">
+                           <padding>
+                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                           </padding>
+                        </TextField>
+                     </children>
+                  </HBox>
+                  <Button fx:id="startScanBtn" mnemonicParsing="false" onAction="#startScan" text="Start scan" />
                </children>
-            </AnchorPane>
+            </VBox>
          </children>
-      </VBox>
-      <CheckBox fx:id="rawImg_checkbox" layoutX="238.0" layoutY="511.0" mnemonicParsing="false" onAction="#rawImgClicked" text="Show processed image" />
+      </HBox>
    </children>
-</AnchorPane>
+</Pane>

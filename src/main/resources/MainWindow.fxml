@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
 
 <Pane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.antego.dev.Controller">
    <children>
@@ -13,7 +13,7 @@
             <VBox alignment="TOP_CENTER">
                <children>
                   <ImageView fx:id="currentFrame" fitHeight="480.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-                  <CheckBox fx:id="rawImg_checkbox" mnemonicParsing="false" onAction="#rawImgClicked" text="Show processed image" />
+                  <CheckBox fx:id="rawImgCheckbox" mnemonicParsing="false" onAction="#rawImgClicked" text="Show processed image" />
                </children>
             </VBox>
             <VBox alignment="CENTER" spacing="3.0">
@@ -73,18 +73,18 @@
                         </ComboBox>
                      </children>
                   </HBox>
-                  <Button fx:id="start_btn" alignment="CENTER" mnemonicParsing="false" onAction="#startCamera" text="Start camera">
+                  <Button fx:id="startBtn" alignment="CENTER" mnemonicParsing="false" onAction="#startCamera" text="Start camera">
                      <VBox.margin>
                         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                      </VBox.margin>
                   </Button>
                   <TabPane tabClosingPolicy="UNAVAILABLE">
                      <tabs>
-                        <Tab closable="false" text="Colib">
+                        <Tab fx:id="calibTab" closable="false" text="Calib">
                            <content>
                               <AnchorPane>
                                  <children>
-                                    <Label text="Colibration">
+                                    <Label text="Calibration">
                                        <VBox.margin>
                                           <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                        </VBox.margin>
@@ -98,9 +98,14 @@
                                        </columnConstraints>
                                        <rowConstraints>
                                           <RowConstraints vgrow="SOMETIMES" />
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                          <RowConstraints />
                                        </rowConstraints>
                                        <children>
-                                          <TextField fx:id="fi_text" layoutX="780.0" layoutY="132.0" GridPane.columnIndex="3">
+                                          <TextField fx:id="fiField" layoutX="780.0" layoutY="132.0" GridPane.columnIndex="3">
                                              <VBox.margin>
                                                 <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                                              </VBox.margin>
@@ -111,30 +116,30 @@
                                           <Label text="Fi, deg" />
                                           <Label text="Theta, deg" GridPane.rowIndex="1" />
                                           <Label text="H, cm" GridPane.rowIndex="3" />
-                                          <TextField fx:id="h_text" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                          <TextField fx:id="hField" GridPane.columnIndex="3" GridPane.rowIndex="3">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
                                           </TextField>
-                                          <TextField fx:id="theta_text" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                          <TextField fx:id="thetaField" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
                                           </TextField>
                                           <Label text="Shaft X, cm" GridPane.rowIndex="4" />
                                           <Label text="Shaft Y, cm" GridPane.rowIndex="5" />
-                                          <TextField fx:id="shaft_x_fld" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                          <TextField fx:id="shaftXFld" GridPane.columnIndex="3" GridPane.rowIndex="4">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
                                           </TextField>
                                           <Label text="Alfa, deg" GridPane.rowIndex="2" />
-                                          <TextField fx:id="alfa_fld" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                          <TextField fx:id="alfaField" GridPane.columnIndex="3" GridPane.rowIndex="2">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
                                           </TextField>
-                                          <TextField fx:id="shaft_y_fld" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                                          <TextField fx:id="shaftYFld" GridPane.columnIndex="3" GridPane.rowIndex="5">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -145,7 +150,7 @@
                               </AnchorPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Detection">
+                        <Tab fx:id="detectTab" closable="false" disable="true" text="Detection">
                             <content>
                               <VBox alignment="CENTER" spacing="6.0">
                                  <children>
@@ -157,7 +162,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="hueMin1" prefWidth="60.0">
+                                          <TextField fx:id="hueMin1Fld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -167,7 +172,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="hueMax1" prefWidth="60.0">
+                                          <TextField fx:id="hueMax1Fld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -181,7 +186,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="hueMin2" prefWidth="60.0">
+                                          <TextField fx:id="hueMin2Fld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -191,7 +196,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="hueMax2" prefWidth="60.0">
+                                          <TextField fx:id="hueMax2Fld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -206,7 +211,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="satMin" prefWidth="60.0">
+                                          <TextField fx:id="satMinFld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -216,7 +221,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="satMax" prefWidth="60.0">
+                                          <TextField fx:id="satMaxFld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -231,7 +236,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="valMin" prefWidth="60.0">
+                                          <TextField fx:id="valMinFld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -241,7 +246,7 @@
                                                 <Insets />
                                              </HBox.margin>
                                           </Label>
-                                          <TextField fx:id="valMax" prefWidth="60.0">
+                                          <TextField fx:id="valMaxFld" prefWidth="60.0">
                                              <padding>
                                                 <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                                              </padding>
@@ -258,7 +263,7 @@
                   <HBox>
                      <children>
                         <Label text="Angle, deg" />
-                        <TextField fx:id="delta_angle_fld" prefWidth="60.0">
+                        <TextField fx:id="deltaAngleFld" prefWidth="60.0">
                            <padding>
                               <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
                            </padding>
@@ -269,6 +274,9 @@
                </children>
             </VBox>
          </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
       </HBox>
    </children>
 </Pane>

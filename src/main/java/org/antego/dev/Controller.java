@@ -1,9 +1,7 @@
 package org.antego.dev;
 
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -14,13 +12,8 @@ import javafx.scene.control.Alert;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import org.opencv.core.Mat;
-import org.opencv.core.Core;
-import org.opencv.core.Size;
-import org.opencv.core.Scalar;
 import org.opencv.core.MatOfByte;
-import org.opencv.core.CvType;
 import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
@@ -28,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
     @FXML
-    private Button start_btn;
+    private Button startBtn;
     @FXML
     private TextField frameWidthFld;
     @FXML
@@ -36,49 +29,47 @@ public class Controller implements Initializable {
     @FXML
     private TextField camIdFld;
     @FXML
+    private Tab calibTab;
+    @FXML
+    private Tab detectTab;
+    @FXML
     private ImageView currentFrame;
-    //manual method fields
     @FXML
-    private Pane manual_pane;
+    private TextField fiField;
     @FXML
-    private TextField fi_text;
+    private TextField thetaField;
     @FXML
-    private TextField theta_text;
+    private TextField hField;
     @FXML
-    private TextField h_text;
+    private TextField alfaField;
     @FXML
-    private TextField alfa_fld;
+    private TextField shaftXFld;
     @FXML
-    private TextField shaft_x_fld;
+    private TextField shaftYFld;
     @FXML
-    private TextField shaft_y_fld;
-    //auto method fields
-    @FXML
-    private TextField delta_angle_fld;
+    private TextField deltaAngleFld;
     @FXML
     private Button startScanBtn;
     @FXML
     private ComboBox<String> portNameComboBox;
     @FXML
-    private Label overall_angle_lbl;
+    private CheckBox rawImgCheckbox;
     @FXML
-    private CheckBox rawImg_checkbox;
+    private TextField hueMin1Fld;
     @FXML
-    private TextField hueMin1;
+    private TextField hueMin2Fld;
     @FXML
-    private TextField hueMin2;
+    private TextField hueMax1Fld;
     @FXML
-    private TextField hueMax1;
+    private TextField hueMax2Fld;
     @FXML
-    private TextField hueMax2;
+    private TextField satMinFld;
     @FXML
-    private TextField satMin;
+    private TextField satMaxFld;
     @FXML
-    private TextField satMax;
+    private TextField valMinFld;
     @FXML
-    private TextField valMin;
-    @FXML
-    private TextField valMax;
+    private TextField valMaxFld;
 
     private volatile boolean takeShoot;
     private Double angle = .0;
@@ -90,16 +81,14 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //TODO choose ports
-        manual_pane.setVisible(true);
         double[] thresholds = imageProcessor.getThresholds();
-        hueMin1.setText(thresholds[0] + "");
-        hueMax1.setText(thresholds[1] + "");
-        hueMin2.setText(thresholds[2] + "");
-        hueMax2.setText(thresholds[3] + "");
-        satMin.setText(thresholds[4] + "");
-        satMax.setText(thresholds[5] + "");
-        valMin.setText(thresholds[6] + "");
+        hueMin1Fld.setText(thresholds[0] + "");
+        hueMax1Fld.setText(thresholds[1] + "");
+        hueMin2Fld.setText(thresholds[2] + "");
+        hueMax2Fld.setText(thresholds[3] + "");
+        satMinFld.setText(thresholds[4] + "");
+        satMaxFld.setText(thresholds[5] + "");
+        valMinFld.setText(thresholds[6] + "");
 
         portNameComboBox.setOnShowing(event -> {
                 portNameComboBox.getItems().clear();
@@ -111,13 +100,13 @@ public class Controller implements Initializable {
 
     @FXML
     protected void rawImgClicked(ActionEvent event) {
-        imageProcessor.setShowRawImg(rawImg_checkbox.isSelected());
+        imageProcessor.setShowRawImg(rawImgCheckbox.isSelected());
     }
 
     @FXML
     protected void applyThresholdsClick(ActionEvent event) {
-        if (hueMin1.getText() != null && hueMin2 != null && hueMax1 != null && hueMax2 != null && satMin != null && satMax != null && valMin != null && valMax != null) {
-            imageProcessor.setThresholds(Double.parseDouble(hueMin1.getText()), Double.parseDouble(hueMax1.getText()), Double.parseDouble(hueMin2.getText()), Double.parseDouble(hueMax2.getText()), Double.parseDouble(satMin.getText()), Double.parseDouble(satMax.getText()), Double.parseDouble(valMin.getText()), Double.parseDouble(valMax.getText()));
+        if (hueMin1Fld.getText() != null && hueMin2Fld != null && hueMax1Fld != null && hueMax2Fld != null && satMinFld != null && satMaxFld != null && valMinFld != null && valMaxFld != null) {
+            imageProcessor.setThresholds(Double.parseDouble(hueMin1Fld.getText()), Double.parseDouble(hueMax1Fld.getText()), Double.parseDouble(hueMin2Fld.getText()), Double.parseDouble(hueMax2Fld.getText()), Double.parseDouble(satMinFld.getText()), Double.parseDouble(satMaxFld.getText()), Double.parseDouble(valMinFld.getText()), Double.parseDouble(valMaxFld.getText()));
         }
     }
 
@@ -126,25 +115,35 @@ public class Controller implements Initializable {
     protected void startCamera(ActionEvent event) {
         // check: the main class is accessible?
         if (rootElement != null) {
-            start_btn.setText("Stop Camera");
-            manual_pane.setDisable(true);
             // get the ImageView object for showing the video stream
             if (captureThread == null || !captureThread.isAlive()) {
+                startBtn.setText("Stop Camera");
+                startScanBtn.setDisable(false);
+                detectTab.setDisable(false);
+                calibTab.setDisable(true);
                 try {
                     captureThread = new CaptureThread();
                     captureThread.start();
                 } catch (FrameBuffer.CameraNotOpenedException camEx) {
-                    start_btn.setText("Start Camera");
+                    startBtn.setText("Start Camera");
+                    startScanBtn.setDisable(true);
+                    detectTab.setDisable(true);
+                    calibTab.setDisable(false);
                     Alert alert = new Alert(Alert.AlertType.ERROR, camEx.getMessage());
                     alert.showAndWait();
                 } catch (SerialPortException serialEx) {
-                    start_btn.setText("Start Camera");
+                    startBtn.setText("Start Camera");
+                    startScanBtn.setDisable(true);
+                    detectTab.setDisable(true);
+                    calibTab.setDisable(false);
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening the port. Please make sure that Arduino connected or try another port.");
                     alert.showAndWait();
                 }
             } else {
-                start_btn.setText("Start Camera");
-                manual_pane.setDisable(false);
+                startBtn.setText("Start Camera");
+                startScanBtn.setDisable(true);
+                detectTab.setDisable(true);
+                calibTab.setDisable(false);
                 // stop the timer
                 if (captureThread != null) {
                     captureThread.interrupt();
@@ -161,17 +160,18 @@ public class Controller implements Initializable {
     protected void startScan() {
         if (isScanning) {
             isScanning = false;
-            start_btn.setDisable(false);
-            delta_angle_fld.setDisable(false);
+            startBtn.setDisable(false);
+            deltaAngleFld.setDisable(false);
             startScanBtn.setText("Start scan");
             angle = 0.0;
         } else {
-            if (delta_angle_fld.getText().isEmpty()) {
+            if (deltaAngleFld.getText().isEmpty()) {
                 return;
             }
-            start_btn.setDisable(true);
-            delta_angle_fld.setDisable(true);
+            startBtn.setDisable(true);
+            deltaAngleFld.setDisable(true);
             startScanBtn.setText("Stop scan");
+            detectTab.setDisable(true);
             fileManager = new FileManager();
             isScanning = true;
         }
@@ -204,15 +204,20 @@ public class Controller implements Initializable {
         private SerialWriter serialWriter;
 
         public CaptureThread() throws FrameBuffer.CameraNotOpenedException, SerialPortException {
-            frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()),Integer.parseInt(frameWidthFld.getText()), Integer.parseInt(frameHeightFld.getText()));
-            serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
+            try {
+                frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()), Integer.parseInt(frameWidthFld.getText()), Integer.parseInt(frameHeightFld.getText()));
+                serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
+            } catch (SerialPortException e) {
+                frameBuffer.stop();
+                throw e;
+            }
             formulaSolver = new FormulaSolver();
         }
 
         @Override
         public void run() {
-            if (!theta_text.getText().isEmpty() && !fi_text.getText().isEmpty() && !h_text.getText().isEmpty() && !alfa_fld.getText().isEmpty() && !shaft_x_fld.getText().isEmpty() && !shaft_y_fld.getText().isEmpty())
-                formulaSolver.setVars(Double.parseDouble(theta_text.getText()), Double.parseDouble(fi_text.getText()), Double.parseDouble(alfa_fld.getText()), Double.parseDouble(h_text.getText()), Double.parseDouble(shaft_x_fld.getText()), Double.parseDouble(shaft_y_fld.getText()));
+            if (!thetaField.getText().isEmpty() && !fiField.getText().isEmpty() && !hField.getText().isEmpty() && !alfaField.getText().isEmpty() && !shaftXFld.getText().isEmpty() && !shaftYFld.getText().isEmpty())
+                formulaSolver.setVars(Double.parseDouble(thetaField.getText()), Double.parseDouble(fiField.getText()), Double.parseDouble(alfaField.getText()), Double.parseDouble(hField.getText()), Double.parseDouble(shaftXFld.getText()), Double.parseDouble(shaftYFld.getText()));
             while (!interrupted()) {
                 tmp = grabFrame(frameBuffer);
                 Platform.runLater(() -> {
@@ -264,16 +269,13 @@ public class Controller implements Initializable {
 
         private void nextScan() {
             int steps = 0;
-            if (!delta_angle_fld.getText().isEmpty()) {
-                steps = Integer.parseInt(delta_angle_fld.getText());
+            if (!deltaAngleFld.getText().isEmpty()) {
+                steps = Integer.parseInt(deltaAngleFld.getText());
             } else {
                 return;
             }
             serialWriter.rotate(steps);
             angle += (double) steps * 360 / 456;
-            Platform.runLater(() ->
-                    overall_angle_lbl.setText(angle.toString())
-            );
         }
     }
 

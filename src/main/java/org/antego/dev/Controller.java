@@ -174,6 +174,7 @@ public class Controller implements Initializable {
             detectTab.setDisable(true);
             fileManager = new FileManager();
             isScanning = true;
+            setTakeShoot(true);
         }
     }
 
@@ -240,23 +241,17 @@ public class Controller implements Initializable {
             try {
                 // read the current frame
                 frame = fb.getFrame();
-                boolean rotated = false;
-                if (takeShoot && isScanning) {
-                    nextScan();
-                    rotated = true;
-                }
-                // if the frame is not empty, process it
                 if (!frame.empty()) {
                     coords = imageProcessor.findDots(frame);
                     imageToShow = mat2Image(frame);
-                    if (takeShoot) {
-                        if (!rotated && isScanning)
-                            nextScan();
+                    if (takeShoot && isScanning) {
                         fullCoords = formulaSolver.getCoordinates(coords, angle);
                         if (fullCoords != null)
                             fileManager.appendToFile(fullCoords);
-                        else System.out.println("Null full coordinates");
-                        takeShoot = false;
+                        else
+                            System.out.println("Null full coordinates");
+                        setTakeShoot(false);
+                        nextScan();
                     }
                 }
             } catch (Exception e) {

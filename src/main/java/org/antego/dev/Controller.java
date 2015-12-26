@@ -17,7 +17,10 @@ import org.opencv.highgui.Highgui;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.ResourceBundle;
+import java.util.concurrent.*;
 
 public class Controller implements Initializable {
     @FXML
@@ -185,12 +188,58 @@ public class Controller implements Initializable {
 
 
     private Image mat2Image(Mat frame) {
-        // create a temporary buffer
         MatOfByte buffer = new MatOfByte();
-        // encode the frame in the buffer
         Highgui.imencode(".bmp", frame, buffer);
-        // build and return an Image created from the image encoded in the buffer
         return new Image(new ByteArrayInputStream(buffer.toArray()));
+    }
+
+    private class MatToImageConverter {
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        final Queue<Future<Image>> imageQueue = new LinkedList<>();
+        Thread imageDisplayer = new Thread(new ImageDisplayer());
+
+        MatToImageConverter() {
+            imageDisplayer.start();
+        }
+
+        void submit(Mat frame) {
+            synchronized (imageQueue) {
+                imageQueue.add(executorService.submit(() -> {
+                    MatOfByte buffer = new MatOfByte();
+                    Highgui.imencode(".bmp", frame, buffer);
+                    return new Image(new ByteArrayInputStream(buffer.toArray()));
+                }));
+                imageQueue.notify();
+            }
+        }
+
+        private class ImageDisplayer implements Runnable {
+            @Override
+            public void run() {
+                while (Thread.currentThread().isInterrupted()) {
+                    synchronized (imageQueue) {
+                        try {
+                            while (imageQueue.isEmpty()) {
+                                imageQueue.wait();
+                            }
+                            Image imageToDisplay = imageQueue.poll().get();
+                            Platform.runLater(() -> {
+                                //if (captureThread != null)
+                                    currentFrame.setImage(imageToDisplay);
+                            });
+                        } catch (InterruptedException | ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
+        void stop() {
+            executorService.shutdown();
+            imageDisplayer.interrupt();
+        }
+
     }
 
     public void setRootElement(Pane root) {
@@ -205,20 +254,27 @@ public class Controller implements Initializable {
         private SerialWriter serialWriter;
 
         public CaptureThread() throws FrameBuffer.CameraNotOpenedException, SerialPortException {
-            try {
-                frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()), Integer.parseInt(frameWidthFld.getText()), Integer.parseInt(frameHeightFld.getText()));
-                serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
-            } catch (SerialPortException e) {
-                frameBuffer.stop();
-                throw e;
-            }
+//            try {
+                frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()),
+                        Integer.parseInt(frameWidthFld.getText()),
+                        Integer.parseInt(frameHeightFld.getText()));
+                //serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
+//            } catch (SerialPortException e) {
+//                frameBuffer.stop();
+//                throw e;
+//            }
             formulaSolver = new FormulaSolver();
         }
 
         @Override
         public void run() {
             if (!thetaField.getText().isEmpty() && !fiField.getText().isEmpty() && !hField.getText().isEmpty() && !alfaField.getText().isEmpty() && !shaftXFld.getText().isEmpty() && !shaftYFld.getText().isEmpty())
-                formulaSolver.setVars(Double.parseDouble(thetaField.getText()), Double.parseDouble(fiField.getText()), Double.parseDouble(alfaField.getText()), Double.parseDouble(hField.getText()), Double.parseDouble(shaftXFld.getText()), Double.parseDouble(shaftYFld.getText()));
+                formulaSolver.setVars(Double.parseDouble(thetaField.getText()),
+                        Double.parseDouble(fiField.getText()),
+                        Double.parseDouble(alfaField.getText()),
+                        Double.parseDouble(hField.getText()),
+                        Double.parseDouble(shaftXFld.getText()),
+                        Double.parseDouble(shaftYFld.getText()));
             while (!interrupted()) {
                 tmp = grabFrame(frameBuffer);
                 Platform.runLater(() -> {
@@ -227,7 +283,7 @@ public class Controller implements Initializable {
                 });
             }
             frameBuffer.stop();
-            serialWriter.disconnect();
+            //serialWriter.disconnect();
         }
 
         private Image grabFrame(FrameBuffer fb) {

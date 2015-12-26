@@ -19,7 +19,12 @@ public class FormulaSolver {
         this.manual_mode = manual_mode;
     }
 
-    public void setVars(double th, double fi, double alfa, double h, double shaft_x, double shaft_y) {
+    public void setVars(double th,
+                        double fi,
+                        double alfa,
+                        double h,
+                        double shaft_x,
+                        double shaft_y) {
         manual_mode = true;
         this.h = h;
         a_man = -1 * Math.tan(Math.toRadians(th)) / h;

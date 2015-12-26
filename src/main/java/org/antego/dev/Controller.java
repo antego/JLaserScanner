@@ -193,55 +193,6 @@ public class Controller implements Initializable {
         return new Image(new ByteArrayInputStream(buffer.toArray()));
     }
 
-    private class MatToImageConverter {
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        final Queue<Future<Image>> imageQueue = new LinkedList<>();
-        Thread imageDisplayer = new Thread(new ImageDisplayer());
-
-        MatToImageConverter() {
-            imageDisplayer.start();
-        }
-
-        void submit(Mat frame) {
-            synchronized (imageQueue) {
-                imageQueue.add(executorService.submit(() -> {
-                    MatOfByte buffer = new MatOfByte();
-                    Highgui.imencode(".bmp", frame, buffer);
-                    return new Image(new ByteArrayInputStream(buffer.toArray()));
-                }));
-                imageQueue.notify();
-            }
-        }
-
-        private class ImageDisplayer implements Runnable {
-            @Override
-            public void run() {
-                while (Thread.currentThread().isInterrupted()) {
-                    synchronized (imageQueue) {
-                        try {
-                            while (imageQueue.isEmpty()) {
-                                imageQueue.wait();
-                            }
-                            Image imageToDisplay = imageQueue.poll().get();
-                            Platform.runLater(() -> {
-                                //if (captureThread != null)
-                                    currentFrame.setImage(imageToDisplay);
-                            });
-                        } catch (InterruptedException | ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-
-        void stop() {
-            executorService.shutdown();
-            imageDisplayer.interrupt();
-        }
-
-    }
-
     public void setRootElement(Pane root) {
         rootElement = root;
     }

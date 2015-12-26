@@ -43,6 +43,7 @@ public class SerialWriter {
 
     class SerialPortReader implements SerialPortEventListener {
         StringBuilder message = new StringBuilder();
+
         public void serialEvent(SerialPortEvent event) {
             if (event.isRXCHAR() && event.getEventValue() > 0) {
                 try {

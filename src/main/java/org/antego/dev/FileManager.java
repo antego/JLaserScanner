@@ -23,7 +23,7 @@ public class FileManager {
 
     private void createFile() {
         try {
-            path = Paths.get(fileName + number+".XYZ");
+            path = Paths.get(fileName + number + ".XYZ");
             try {
                 Files.createFile(path);
             } catch (FileAlreadyExistsException e) {
@@ -39,13 +39,13 @@ public class FileManager {
 
     public void appendToFile(double[][] coords) {
         StringBuilder sb = new StringBuilder();
-        if(Files.exists(path)) {
-            try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))) {
-                for(double[] c: coords) {
+        if (Files.exists(path)) {
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path.toString(), true)))) {
+                for (double[] c : coords) {
                     sb.append(c[0]).append(" ").append(c[1]).append(" ").append(c[2]).append("\n");
                 }
                 out.print(sb);
-            }catch (IOException e) {
+            } catch (IOException e) {
                 //TODO exception handling
             }
         }

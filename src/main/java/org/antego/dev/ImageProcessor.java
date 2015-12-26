@@ -1,7 +1,6 @@
 package org.antego.dev;
 
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -41,7 +40,7 @@ public class ImageProcessor {
     }
 
     public synchronized double[] getThresholds() {
-        return new double[]{hue1Min,hue1Max,hue2Min,hue2Max,satMin,satMax,valMin,valMax};
+        return new double[]{hue1Min, hue1Max, hue2Min, hue2Max, satMin, satMax, valMin, valMax};
     }
 
     public synchronized void setShowRawImg(boolean showRawImg) {

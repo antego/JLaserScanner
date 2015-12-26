@@ -57,11 +57,10 @@ public class FormulaSolver {
     }
 
 
-
     public double[][] turnProfile(double[][] coords, double angle) {
-        if(coords != null) {
+        if (coords != null) {
             double[][] newCoords = new double[coords.length][coords[0].length];
-            for (int i = 0; i < coords.length;i++) {
+            for (int i = 0; i < coords.length; i++) {
                 newCoords[i][0] = (coords[i][0] - shaft_x) * Math.cos(angle) - (coords[i][1] - shaft_y) * Math.sin(angle);
                 newCoords[i][1] = (coords[i][1] - shaft_y) * Math.cos(angle) + (coords[i][0] - shaft_x) * Math.sin(angle);
                 newCoords[i][2] = coords[i][2];

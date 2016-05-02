@@ -15,10 +15,11 @@ import java.util.logging.Logger;
  */
 public class FileManager {
     private static final Logger logger = Logger.getLogger(FileManager.class.getName());
+
     private static final String FILE_NAME = "scan";
     private Path path;
 
-    FileManager() {
+    public FileManager() {
         int number = 0;
         path = Paths.get(FILE_NAME + number + ".XYZ");
         while (true) {

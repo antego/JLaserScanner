@@ -8,19 +8,25 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by anton on 16.03.2015.
- */
-public class ImageProcessor {
-    private double hue2Min = 0;
-    private double hue2Max = 10;
-    private double hue1Min = 170;
-    private double hue1Max = 179;
-    private double satMin = 200;
-    private double satMax = 255;
-    private double valMin = 200;
-    private double valMax = 255;
 
+public class ImageProcessor {
+    public static final double DEFAULT_HUE1_MIN = 170;
+    public static final double DEFAULT_HUE1_MAX = 179;
+    public static final double DEFAULT_HUE2_MIN = 0;
+    public static final double DEFAULT_HUE2_MAX = 10;
+    public static final double DEFAULT_SAT_MIN = 200;
+    public static final double DEFAULT_SAT_MAX = 255;
+    public static final double DEFAULT_VAL_MIN = 200;
+    public static final double DEFAULT_VAL_MAX = 255;
+
+    private double hue1Min = DEFAULT_HUE1_MIN;
+    private double hue1Max = DEFAULT_HUE1_MAX;
+    private double hue2Min = DEFAULT_HUE2_MIN;
+    private double hue2Max = DEFAULT_HUE2_MAX;
+    private double satMin = DEFAULT_SAT_MIN;
+    private double satMax = DEFAULT_SAT_MAX;
+    private double valMin = DEFAULT_VAL_MIN;
+    private double valMax = DEFAULT_VAL_MAX;
 
     private boolean showRawImg;
 
@@ -40,10 +46,6 @@ public class ImageProcessor {
         this.satMax = satMax;
         this.valMin = valMin;
         this.valMax = valMax;
-    }
-
-    public synchronized double[] getThresholds() {
-        return new double[]{hue1Min, hue1Max, hue2Min, hue2Max, satMin, satMax, valMin, valMax};
     }
 
     public synchronized void setShowRawImg(boolean showRawImg) {
@@ -75,13 +77,12 @@ public class ImageProcessor {
                         count++;
                     }
                 }
-                //Center coordinate of dot
                 if (coords.length % 2 == 0) {
                     lineCenter.add(new Double[]{(double) j, (coords[coords.length / 2] + coords[coords.length / 2 - 1]) / 2});
                 } else {
                     lineCenter.add(new Double[]{(double) j, coords[coords.length / 2]});
                 }
-                //make chosen dot black
+                //show chosen dots as black
                 frame.put(j, lineCenter.get(lineCenter.size() - 1)[1].intValue(), 0, 0, 0);
             }
         }

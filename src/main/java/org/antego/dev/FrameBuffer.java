@@ -44,7 +44,7 @@ public class FrameBuffer implements Runnable {
     }
 
     public Mat getFrame() {
-        return frame;
+        return frame.clone();
     }
 
     public static class CameraNotOpenedException extends Exception {

@@ -6,16 +6,20 @@ import jssc.SerialPortEvent;
 import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class SerialWriter {
-    //todo logger
+    Logger logger = Logger.getLogger(SerialWriter.class.getName());
+
     SerialPort serialPort;
     Controller controller;
 
     public SerialWriter(String port, Controller controller) throws SerialPortException {
         this.controller = controller;
         serialPort = new SerialPort(port);
-        System.out.println("Port opened: " + serialPort.openPort());
-        System.out.println("Params setted: " + serialPort.setParams(9600, 8, 1, 0, true, false));
+        logger.info("Port opened: " + serialPort.openPort());
+        logger.info("Params setted: " + serialPort.setParams(9600, 8, 1, 0, true, false));
         int mask = SerialPort.MASK_RXCHAR;
         serialPort.setEventsMask(mask);
         serialPort.addEventListener(new SerialPortReader());
@@ -23,10 +27,14 @@ public class SerialWriter {
 
     public boolean disconnect() {
         try {
-            serialPort.closePort();
-            return true;
+            serialPort.removeEventListener();
         } catch (SerialPortException ex) {
-            ex.printStackTrace();
+            logger.log(Level.INFO, "", ex);
+        }
+        try {
+            return serialPort.closePort();
+        } catch (SerialPortException ex) {
+            logger.log(Level.SEVERE, "", ex);
             return false;
         }
     }
@@ -35,7 +43,7 @@ public class SerialWriter {
         try {
             return serialPort.writeString("r" + steps + "\r\n");
         } catch (SerialPortException ex) {
-            ex.printStackTrace();
+            logger.log(Level.SEVERE, "", ex);
             return false;
         }
     }
@@ -59,10 +67,8 @@ public class SerialWriter {
                             if (b != '\n' && b != '\r') message.append((char) b);
                         }
                     }
-                } catch (SerialPortException ex) {
-                    ex.printStackTrace();
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (Exception ex) {
+                    logger.log(Level.SEVERE, "", ex);
                 }
             }
         }

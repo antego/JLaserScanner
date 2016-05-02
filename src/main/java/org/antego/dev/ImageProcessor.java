@@ -88,6 +88,11 @@ public class ImageProcessor {
         if (showRawImg) {
             result.copyTo(frame);
         }
-        return lineCenter.stream().toArray(double[][]::new);
+        double[][] median = new double[lineCenter.size()][2];
+        for (int i = 0; i < lineCenter.size(); i++) {
+            median[i][0] = lineCenter.get(i)[0];
+            median[i][1] = lineCenter.get(i)[1];
+        }
+        return median;
     }
 }

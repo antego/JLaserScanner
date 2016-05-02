@@ -66,6 +66,8 @@ public class Controller implements Initializable {
         satMinFld.setText(thresholds[4] + "");
         satMaxFld.setText(thresholds[5] + "");
         valMinFld.setText(thresholds[6] + "");
+        valMaxFld.setText(thresholds[7] + "");
+
 
         portNameComboBox.setOnShowing(event -> {
                 portNameComboBox.getItems().clear();

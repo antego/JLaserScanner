@@ -5,21 +5,24 @@ import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by anton on 16.03.2015.
  */
 public class ImageProcessor {
-    public static final int THRESHOLD = 250;
-    double hue2Min = 0;
-    double hue2Max = 10;
-    double hue1Min = 170;
-    double hue1Max = 179;
-    double satMin = 200;
-    double satMax = 255;
-    double valMin = 200;
-    double valMax = 255;
+    private double hue2Min = 0;
+    private double hue2Max = 10;
+    private double hue1Min = 170;
+    private double hue1Max = 179;
+    private double satMin = 200;
+    private double satMax = 255;
+    private double valMin = 200;
+    private double valMax = 255;
 
-    boolean showRawImg = false;
+
+    private boolean showRawImg;
 
     public synchronized void setThresholds(double hue1Min,
                                            double hue1Max,
@@ -47,7 +50,7 @@ public class ImageProcessor {
         this.showRawImg = showRawImg;
     }
 
-    public synchronized double[] findDots(Mat frame) {
+    public synchronized double[][] findDots(Mat frame) {
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HSV);
         Mat part1 = new Mat();
         Mat part2 = new Mat();
@@ -57,37 +60,34 @@ public class ImageProcessor {
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_HSV2BGR);
         Core.add(part1, part2, result);
 
-        int count = 0;
-        double[] median = new double[FrameBuffer.frameHeight];
-        for (int j = 0; j < FrameBuffer.frameHeight; j++) {
-            for (int k = 0; k < FrameBuffer.frameWidth; k++) {
-                if (result.get(j, k)[0] > THRESHOLD) count++;
+        List<Double[]> lineCenter = new ArrayList<>();
+        for (int j = 0; j < frame.height(); j++) {
+            int count = 0;
+            for (int k = 0; k < frame.width(); k++) {
+                if (result.get(j, k)[0] != 0) count++;
             }
             if (count > 0) {
                 double[] coords = new double[count];
                 count = 0;
-                for (int k = 0; k < FrameBuffer.frameWidth; k++) {
-                    if (result.get(j, k)[0] > THRESHOLD) {
-                        //массив координат х ов больше 230
+                for (int k = 0; k < frame.width(); k++) {
+                    if (result.get(j, k)[0] != 0) {
                         coords[count] = k;
                         count++;
                     }
                 }
                 //Center coordinate of dot
                 if (coords.length % 2 == 0) {
-                    median[j] = (coords[coords.length / 2] + coords[coords.length / 2 - 1]) / 2;
+                    lineCenter.add(new Double[]{(double) j, (coords[coords.length / 2] + coords[coords.length / 2 - 1]) / 2});
                 } else {
-                    median[j] = coords[coords.length / 2];
+                    lineCenter.add(new Double[]{(double) j, coords[coords.length / 2]});
                 }
-                //make choosen dot red
-                frame.put(j, (int) median[j], new double[]{0, 0, 0});
-
-            } else median[j] = -1;
-            count = 0;
+                //make chosen dot black
+                frame.put(j, lineCenter.get(lineCenter.size() - 1)[1].intValue(), 0, 0, 0);
+            }
         }
         if (showRawImg) {
             result.copyTo(frame);
         }
-        return median;
+        return lineCenter.stream().toArray(double[][]::new);
     }
 }

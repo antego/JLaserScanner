@@ -1,81 +1,57 @@
 package org.antego.dev;
 
+import java.util.Arrays;
+
 /**
  * Created by anton on 10.03.2015.
  */
 public class FormulaSolver {
-    boolean manual_mode;
-    boolean valuesSetted = false;
-    double h;
-    double a_man;
-    double b_man;
-    double a_auto;
-    double b_auto;
-    double tan_alfa;
-    double shaft_x;
-    double shaft_y;
+    private boolean valuesSet;
+    private double h;
+    private double aMan;
+    private double bMan;
+    private double tanAlpha;
+    private double shaftX;
+    private double shaftY;
 
-    public void setMode(boolean manual_mode) {
-        this.manual_mode = manual_mode;
-    }
 
-    public void setVars(double th,
-                        double fi,
-                        double alfa,
-                        double h,
-                        double shaft_x,
-                        double shaft_y) {
-        manual_mode = true;
+    public void setVars(double th, double fi, double alfa, double h, double shaftX, double shaftY) {
         this.h = h;
-        a_man = -1 * Math.tan(Math.toRadians(th)) / h;
-        b_man = Math.tan(Math.toRadians(fi)) / h;
-        tan_alfa = Math.tan(Math.toRadians(alfa));
-        this.shaft_x = shaft_x;
-        this.shaft_y = shaft_y;
-        valuesSetted = true;
+        aMan = -1 * Math.tan(Math.toRadians(th)) / h;
+        bMan = Math.tan(Math.toRadians(fi)) / h;
+        tanAlpha = Math.tan(Math.toRadians(alfa));
+        this.shaftX = shaftX;
+        this.shaftY = shaftY;
+        valuesSet = true;
     }
 
-    public synchronized double[][] getCoordinates(double[] frameCoords, double angle) {
-        if (valuesSetted) {
-            int count = 0;
-            for (double x : frameCoords) if (x != -1) count++;
-            double[][] profileCoords = new double[count][3];
-            int j = 0;
-            for (int i = 0; i < frameCoords.length; i++) {
-                if (frameCoords[i] != -1) {
-                    profileCoords[j][0] = distance(frameCoords[i]);
-                    profileCoords[j][1] = (FrameBuffer.frameWidth / 2 - frameCoords[i]) / (FrameBuffer.frameWidth / 2) * profileCoords[j][0] * a_man * -1 * h;
-                    profileCoords[j][2] = ((FrameBuffer.frameHeight / 2) - (double) i) / (FrameBuffer.frameHeight / 2) * profileCoords[j][0] * tan_alfa;
-                    j = j + 1;
-                }
+    public synchronized double[][] getCoordinates(double[][] frameCoords, double angle, int frameWidth, int frameHeight) {
+        if (valuesSet) {
+            double[][] profileCoords = Arrays.stream(frameCoords).map(rc -> {
+                double[] xyz = new double[3];
+                xyz[0] = findDistance(rc[1], frameWidth);
+                xyz[1] = (frameWidth / 2 - rc[1]) / (frameWidth / 2) * xyz[0] * aMan * -1 * h;
+                xyz[2] = ((frameHeight / 2) - rc[0]) / (frameHeight / 2) * xyz[0] * tanAlpha;
+                return xyz;
+            }).toArray(double[][]::new);
 
-            }
             return turnProfile(profileCoords, Math.toRadians(angle));
         } else {
-            return null;
+            throw new RuntimeException("Position parameters not set");
         }
     }
 
-
-    public double[][] turnProfile(double[][] coords, double angle) {
-        if (coords != null) {
-            double[][] newCoords = new double[coords.length][coords[0].length];
-            for (int i = 0; i < coords.length; i++) {
-                newCoords[i][0] = (coords[i][0] - shaft_x) * Math.cos(angle) - (coords[i][1] - shaft_y) * Math.sin(angle);
-                newCoords[i][1] = (coords[i][1] - shaft_y) * Math.cos(angle) + (coords[i][0] - shaft_x) * Math.sin(angle);
-                newCoords[i][2] = coords[i][2];
-            }
-            return newCoords;
-        } else {
-            return null;
+    private double[][] turnProfile(double[][] coords, double angle) {
+        double[][] newCoords = new double[coords.length][coords[0].length];
+        for (int i = 0; i < coords.length; i++) {
+            newCoords[i][0] = (coords[i][0] - shaftX) * Math.cos(angle) - (coords[i][1] - shaftY) * Math.sin(angle);
+            newCoords[i][1] = (coords[i][1] - shaftY) * Math.cos(angle) + (coords[i][0] - shaftX) * Math.sin(angle);
+            newCoords[i][2] = coords[i][2];
         }
+        return newCoords;
     }
 
-    private synchronized double distance(double x) {
-        if (manual_mode) {
-            return 1 / (b_man + a_man * (FrameBuffer.frameWidth / 2 - x) / (FrameBuffer.frameWidth / 2));
-        } else {
-            return 1 / (b_auto + a_auto * (FrameBuffer.frameWidth / 2 - x) / (FrameBuffer.frameWidth / 2));
-        }
+    private synchronized double findDistance(double x, int frameWidth) {
+        return 1 / (bMan + aMan * (frameWidth / 2 - x) / (frameWidth / 2));
     }
 }

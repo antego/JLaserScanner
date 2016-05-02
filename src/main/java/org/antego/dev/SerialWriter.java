@@ -1,6 +1,4 @@
-package org.antego.dev; /**
- * Created by anton on 28.02.2015.
- */
+package org.antego.dev;
 
 import javafx.application.Platform;
 import jssc.SerialPort;
@@ -9,6 +7,7 @@ import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
 public class SerialWriter {
+    //todo logger
     SerialPort serialPort;
     Controller controller;
 

@@ -4,11 +4,15 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.scene.control.Alert;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
 import org.opencv.core.Mat;
@@ -17,40 +21,23 @@ import org.opencv.highgui.Highgui;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.ResourceBundle;
-import java.util.concurrent.*;
+import java.util.logging.Logger;
 
 public class Controller implements Initializable {
+    //todo log exceptions
+    private final static Logger logger = Logger.getLogger(Controller.class.getName());
+
     @FXML
     private Button startBtn;
     @FXML
-    private TextField frameWidthFld;
+    private TextField frameWidthFld, frameHeightFld, camIdFld;
     @FXML
-    private TextField frameHeightFld;
-    @FXML
-    private TextField camIdFld;
-    @FXML
-    private Tab calibTab;
-    @FXML
-    private Tab detectTab;
+    private Tab calibTab, detectTab;
     @FXML
     private ImageView currentFrame;
     @FXML
-    private TextField fiField;
-    @FXML
-    private TextField thetaField;
-    @FXML
-    private TextField hField;
-    @FXML
-    private TextField alfaField;
-    @FXML
-    private TextField shaftXFld;
-    @FXML
-    private TextField shaftYFld;
-    @FXML
-    private TextField deltaAngleFld;
+    private TextField fiField, thetaField, hField, alfaField, shaftXFld, shaftYFld, deltaAngleFld;
     @FXML
     private Button startScanBtn;
     @FXML
@@ -58,30 +45,17 @@ public class Controller implements Initializable {
     @FXML
     private CheckBox rawImgCheckbox;
     @FXML
-    private TextField hueMin1Fld;
-    @FXML
-    private TextField hueMin2Fld;
-    @FXML
-    private TextField hueMax1Fld;
-    @FXML
-    private TextField hueMax2Fld;
-    @FXML
-    private TextField satMinFld;
-    @FXML
-    private TextField satMaxFld;
-    @FXML
-    private TextField valMinFld;
-    @FXML
-    private TextField valMaxFld;
+    private TextField hueMin1Fld, hueMin2Fld, hueMax1Fld, hueMax2Fld, satMinFld, satMaxFld, valMinFld, valMaxFld;
 
     private volatile boolean takeShoot;
-    private Double angle = .0;
+    private double angle;
     private Pane rootElement;
     private Thread captureThread;
     private FileManager fileManager;
     private ImageProcessor imageProcessor = new ImageProcessor();
     private volatile boolean isScanning = false;
 
+    //todo constructor
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         double[] thresholds = imageProcessor.getThresholds();
@@ -106,6 +80,7 @@ public class Controller implements Initializable {
         imageProcessor.setShowRawImg(rawImgCheckbox.isSelected());
     }
 
+    //todo settings dto
     @FXML
     protected void applyThresholdsClick(ActionEvent event) {
         if (hueMin1Fld.getText() != null && hueMin2Fld != null && hueMax1Fld != null && hueMax2Fld != null && satMinFld != null && satMaxFld != null && valMinFld != null && valMaxFld != null) {
@@ -116,9 +91,7 @@ public class Controller implements Initializable {
 
     @FXML
     protected void startCamera(ActionEvent event) {
-        // check: the main class is accessible?
         if (rootElement != null) {
-            // get the ImageView object for showing the video stream
             if (captureThread == null || !captureThread.isAlive()) {
                 startBtn.setText("Stop Camera");
                 startScanBtn.setDisable(false);
@@ -147,14 +120,10 @@ public class Controller implements Initializable {
                 startScanBtn.setDisable(true);
                 detectTab.setDisable(true);
                 calibTab.setDisable(false);
-                // stop the timer
                 if (captureThread != null) {
                     captureThread.interrupt();
                     captureThread = null;
                 }
-                // release the camera
-                // clear the image container
-//                currentFrame.setImage(null);
             }
         }
     }
@@ -197,6 +166,13 @@ public class Controller implements Initializable {
         rootElement = root;
     }
 
+    public void onClose() {
+        if (captureThread != null) {
+            captureThread.interrupt();
+            captureThread = null;
+        }
+    }
+
     private class CaptureThread extends Thread {
         Image tmp;
 
@@ -205,20 +181,21 @@ public class Controller implements Initializable {
         private SerialWriter serialWriter;
 
         public CaptureThread() throws FrameBuffer.CameraNotOpenedException, SerialPortException {
-//            try {
+            try {
                 frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()),
                         Integer.parseInt(frameWidthFld.getText()),
                         Integer.parseInt(frameHeightFld.getText()));
-                //serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
-//            } catch (SerialPortException e) {
-//                frameBuffer.stop();
-//                throw e;
-//            }
+                serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
+            } catch (SerialPortException e) {
+                frameBuffer.stop();
+                throw e;
+            }
             formulaSolver = new FormulaSolver();
         }
 
         @Override
         public void run() {
+            //todo dto
             if (!thetaField.getText().isEmpty() && !fiField.getText().isEmpty() && !hField.getText().isEmpty() && !alfaField.getText().isEmpty() && !shaftXFld.getText().isEmpty() && !shaftYFld.getText().isEmpty())
                 formulaSolver.setVars(Double.parseDouble(thetaField.getText()),
                         Double.parseDouble(fiField.getText()),
@@ -226,7 +203,7 @@ public class Controller implements Initializable {
                         Double.parseDouble(hField.getText()),
                         Double.parseDouble(shaftXFld.getText()),
                         Double.parseDouble(shaftYFld.getText()));
-            while (!interrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 tmp = grabFrame(frameBuffer);
                 Platform.runLater(() -> {
                     if (captureThread != null)
@@ -234,25 +211,22 @@ public class Controller implements Initializable {
                 });
             }
             frameBuffer.stop();
-            //serialWriter.disconnect();
+            serialWriter.disconnect();
         }
 
         private Image grabFrame(FrameBuffer fb) {
-            //init
             Image imageToShow = null;
             Mat frame;
 
-            final double[] coords;
+            double[][] coords;
             double[][] fullCoords;
-            // check if the capture is open
             try {
-                // read the current frame
                 frame = fb.getFrame();
                 if (!frame.empty()) {
                     coords = imageProcessor.findDots(frame);
                     imageToShow = mat2Image(frame);
                     if (takeShoot && isScanning) {
-                        fullCoords = formulaSolver.getCoordinates(coords, angle);
+                        fullCoords = formulaSolver.getCoordinates(coords, angle, frame.width(), frame.height());
                         if (fullCoords != null)
                             fileManager.appendToFile(fullCoords);
                         else
@@ -263,14 +237,13 @@ public class Controller implements Initializable {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                // log the error
                 System.err.println("ERROR: " + e.getMessage());
             }
             return imageToShow;
         }
 
         private void nextScan() {
-            int steps = 0;
+            int steps;
             if (!deltaAngleFld.getText().isEmpty()) {
                 steps = Integer.parseInt(deltaAngleFld.getText());
             } else {
@@ -278,13 +251,6 @@ public class Controller implements Initializable {
             }
             serialWriter.rotate(steps);
             angle += (double) steps * 360 / 456;
-        }
-    }
-
-    public void onClose() {
-        if (captureThread != null) {
-            captureThread.interrupt();
-            captureThread = null;
         }
     }
 }

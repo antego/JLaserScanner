@@ -44,7 +44,7 @@ public class FileManager {
                 }
                 out.println(sb);
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Exception while writing to file", e);
+                logger.log(Level.SEVERE, "Exception while writing to a file", e);
             }
         }
     }

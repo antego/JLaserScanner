@@ -18,8 +18,8 @@ public class SerialWriter {
     public SerialWriter(String port, Controller controller) throws SerialPortException {
         this.controller = controller;
         serialPort = new SerialPort(port);
-        logger.info("Port opened: " + serialPort.openPort());
-        logger.info("Params setted: " + serialPort.setParams(9600, 8, 1, 0, true, false));
+        logger.info("Port is opened: " + serialPort.openPort());
+        logger.info("Parameters has been set: " + serialPort.setParams(9600, 8, 1, 0, true, false));
         int mask = SerialPort.MASK_RXCHAR;
         serialPort.setEventsMask(mask);
         serialPort.addEventListener(new SerialPortReader());

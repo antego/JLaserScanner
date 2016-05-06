@@ -78,9 +78,11 @@ public class ImageProcessor {
                     }
                 }
                 if (coords.length % 2 == 0) {
-                    lineCenter.add(new Double[]{(double) j, (coords[coords.length / 2] + coords[coords.length / 2 - 1]) / 2});
+                    lineCenter.add(new Double[]{(double) j,
+                            (coords[coords.length / 2] + coords[coords.length / 2 - 1]) / 2});
                 } else {
-                    lineCenter.add(new Double[]{(double) j, coords[coords.length / 2]});
+                    lineCenter.add(new Double[]{(double) j,
+                            coords[coords.length / 2]});
                 }
                 //show chosen dots as black
                 frame.put(j, lineCenter.get(lineCenter.size() - 1)[1].intValue(), 0, 0, 0);

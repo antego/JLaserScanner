@@ -10,10 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SerialWriter {
-    Logger logger = Logger.getLogger(SerialWriter.class.getName());
+    private final static Logger logger = Logger.getLogger(SerialWriter.class.toString());
 
-    SerialPort serialPort;
-    Controller controller;
+    private SerialPort serialPort;
+    private Controller controller;
 
     public SerialWriter(String port, Controller controller) throws SerialPortException {
         this.controller = controller;
@@ -61,7 +61,7 @@ public class SerialWriter {
                                 Thread.sleep(1000);
                                 Platform.runLater(() -> controller.setTakeShoot(true));
                             }
-                            System.out.println(message.toString());
+                            logger.log(Level.INFO, message.toString());
                             message.setLength(0);
                         } else {
                             if (b != '\n' && b != '\r') message.append((char) b);

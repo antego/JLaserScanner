@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 import static org.antego.dev.ImageProcessor.*;
 
 public class Controller implements Initializable {
-    private final static Logger logger = Logger.getLogger(Controller.class.getName());
+    private final static Logger logger = Logger.getLogger(Controller.class.toString());
 
     private static final int STEPS_COUNT = 456;
 

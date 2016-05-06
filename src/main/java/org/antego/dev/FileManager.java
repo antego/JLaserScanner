@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * Created by anton on 15.03.2015.
  */
 public class FileManager {
-    private static final Logger logger = Logger.getLogger(FileManager.class.getName());
+    private static final Logger logger = Logger.getLogger(FileManager.class.toString());
 
     private static final String FILE_NAME = "scan";
     private Path path;

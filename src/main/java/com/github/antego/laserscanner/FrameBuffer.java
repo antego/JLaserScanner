@@ -1,9 +1,12 @@
 package com.github.antego.laserscanner;
 
 import com.github.sarxos.webcam.Webcam;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
-//todo error handling
+import static com.github.sarxos.webcam.WebcamResolution.HD720;
+
 public class FrameBuffer {
     private Webcam webcam;
 

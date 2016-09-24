@@ -32,8 +32,6 @@ public class Controller implements Initializable {
     @FXML
     private Button startBtn;
     @FXML
-    private TextField frameWidthFld, frameHeightFld, camIdFld;
-    @FXML
     private Tab calibTab, detectTab;
     @FXML
     private ImageView currentFrame;
@@ -105,9 +103,9 @@ public class Controller implements Initializable {
                 Alert alert = new Alert(Alert.AlertType.ERROR, camEx.getMessage());
                 alert.showAndWait();
             } catch (SerialPortException serialEx) {
-                stopCamera();
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening the port. Please make sure that Arduino connected or try another port.");
-                alert.showAndWait();
+//                stopCamera();
+//                Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening the port. Please make sure that Arduino connected or try another port.");
+//                alert.showAndWait();
             }
         } else {
             stopCamera();
@@ -175,8 +173,8 @@ public class Controller implements Initializable {
                 frameBuffer = new FrameBuffer();
                 serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
             } catch (SerialPortException e) {
-                frameBuffer.stop();
-                throw e;
+//                frameBuffer.stop();
+//                throw e;
             }
             formulaSolver = new FormulaSolver();
         }

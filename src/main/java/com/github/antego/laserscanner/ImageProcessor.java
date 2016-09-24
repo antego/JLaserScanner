@@ -24,11 +24,11 @@ public class ImageProcessor {
 
     private boolean showRawImg;
 
-    public synchronized void setThresholds(double hue1Min, double hue1Max,
+    public synchronized void setThresholds(double hueMin, double hueMax,
                                            double satMin, double satMax,
                                            double valMin, double valMax) {
-        this.minHue = hue1Min;
-        this.maxHue = hue1Max;
+        this.minHue = hueMin;
+        this.maxHue = hueMax;
         this.minSat = satMin;
         this.maxSat = satMax;
         this.minVal = valMin;

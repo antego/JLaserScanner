@@ -9,8 +9,16 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<Pane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="com.github.antego.laserscanner.Controller">
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<Pane xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.antego.laserscanner.Controller">
    <children>
       <HBox>
          <children>
@@ -22,44 +30,6 @@
             </VBox>
             <VBox alignment="CENTER" spacing="3.0">
                <children>
-                  <HBox prefHeight="29.0" prefWidth="215.0">
-                     <children>
-                        <Label text="Camera id">
-                           <HBox.margin>
-                              <Insets right="5.0" />
-                           </HBox.margin>
-                        </Label>
-                        <TextField fx:id="camIdFld" prefWidth="60.0" text="0">
-                           <padding>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                           </padding>
-                        </TextField>
-                     </children>
-                  </HBox>
-                  <HBox>
-                     <children>
-                        <Label text="Width">
-                           <padding>
-                              <Insets right="4.0" />
-                           </padding>
-                        </Label>
-                        <TextField fx:id="frameWidthFld" prefWidth="55.0" text="640">
-                           <padding>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                           </padding>
-                        </TextField>
-                        <Label text="Height">
-                           <padding>
-                              <Insets right="4.0" />
-                           </padding>
-                        </Label>
-                        <TextField fx:id="frameHeightFld" prefWidth="55.0" text="480">
-                           <padding>
-                              <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-                           </padding>
-                        </TextField>
-                     </children>
-                  </HBox>
                   <HBox>
                      <children>
                         <Label text="Port name">
@@ -77,8 +47,7 @@
                         </ComboBox>
                      </children>
                   </HBox>
-                  <Button fx:id="startBtn" alignment="CENTER" mnemonicParsing="false" onAction="#handleCameraButton"
-                          text="Start camera">
+                  <Button fx:id="startBtn" alignment="CENTER" mnemonicParsing="false" onAction="#handleCameraButton" text="Start camera">
                      <VBox.margin>
                         <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
                      </VBox.margin>

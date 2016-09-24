@@ -1,6 +1,7 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,20 +13,16 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import jssc.SerialPortException;
 import jssc.SerialPortList;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.highgui.Highgui;
 
-import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.antego.dev.ImageProcessor.*;
+import static com.github.antego.laserscanner.ImageProcessor.*;
 
 public class Controller implements Initializable {
     private final static Logger logger = Logger.getLogger(Controller.class.toString());
@@ -53,8 +50,7 @@ public class Controller implements Initializable {
 
     private volatile boolean takeShoot;
     private double angle;
-    private Pane rootElement;
-    private Thread captureThread;
+    private CaptureThread captureThread;
     private FileManager fileManager;
     private ImageProcessor imageProcessor = new ImageProcessor();
     private volatile boolean isScanning = false;
@@ -94,8 +90,6 @@ public class Controller implements Initializable {
                 valMaxFld.getText() != null) {
             imageProcessor.setThresholds(Double.parseDouble(hueMin1Fld.getText()),
                     Double.parseDouble(hueMax1Fld.getText()),
-                    Double.parseDouble(hueMin2Fld.getText()),
-                    Double.parseDouble(hueMax2Fld.getText()),
                     Double.parseDouble(satMinFld.getText()),
                     Double.parseDouble(satMaxFld.getText()),
                     Double.parseDouble(valMinFld.getText()),
@@ -105,27 +99,24 @@ public class Controller implements Initializable {
 
     @FXML
     protected void handleCameraButton(ActionEvent event) {
-        if (rootElement != null) {
-            if (captureThread == null || !captureThread.isAlive()) {
-                startCamera();
-                try {
-                    captureThread = new CaptureThread();
-                    captureThread.start();
-                } catch (FrameBuffer.CameraNotOpenedException camEx) {
-                    stopCamera();
-                    Alert alert = new Alert(Alert.AlertType.ERROR, camEx.getMessage());
-                    alert.showAndWait();
-                } catch (SerialPortException serialEx) {
-                    stopCamera();
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening the port. Please make sure that Arduino connected or try another port.");
-                    alert.showAndWait();
-                }
-            } else {
+        if (captureThread == null || !captureThread.isAlive()) {
+            startCamera();
+            try {
+                captureThread = new CaptureThread();
+                captureThread.start();
+            } catch (FrameBuffer.CameraNotOpenedException camEx) {
                 stopCamera();
-                if (captureThread != null) {
-                    captureThread.interrupt();
-                    captureThread = null;
-                }
+                Alert alert = new Alert(Alert.AlertType.ERROR, camEx.getMessage());
+                alert.showAndWait();
+            } catch (SerialPortException serialEx) {
+                stopCamera();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Error while opening the port. Please make sure that Arduino connected or try another port.");
+                alert.showAndWait();
+            }
+        } else {
+            stopCamera();
+            if (captureThread != null) {
+                captureThread.setCapture(false);
             }
         }
     }
@@ -171,14 +162,9 @@ public class Controller implements Initializable {
             takeShoot = ts;
     }
 
-    public void setRootElement(Pane root) {
-        rootElement = root;
-    }
-
     public void onClose() {
         if (captureThread != null) {
-            captureThread.interrupt();
-            captureThread = null;
+            captureThread.setCapture(false);
         }
     }
 
@@ -186,12 +172,11 @@ public class Controller implements Initializable {
         private FormulaSolver formulaSolver;
         private FrameBuffer frameBuffer;
         private SerialWriter serialWriter;
+        private volatile boolean capture = true;
 
         public CaptureThread() throws FrameBuffer.CameraNotOpenedException, SerialPortException {
             try {
-                frameBuffer = new FrameBuffer(Integer.parseInt(camIdFld.getText()),
-                        Integer.parseInt(frameWidthFld.getText()),
-                        Integer.parseInt(frameHeightFld.getText()));
+                frameBuffer = new FrameBuffer();
                 serialWriter = new SerialWriter(Controller.this.portNameComboBox.getValue(), Controller.this);
             } catch (SerialPortException e) {
                 frameBuffer.stop();
@@ -216,7 +201,7 @@ public class Controller implements Initializable {
                         Double.parseDouble(shaftYFld.getText()));
             }
 
-            while (!Thread.currentThread().isInterrupted()) {
+            while (capture) {
                 Image tmp = grabFrame(frameBuffer);
                 Platform.runLater(() -> {
                     if (captureThread != null)
@@ -230,13 +215,13 @@ public class Controller implements Initializable {
         private Image grabFrame(FrameBuffer fb) {
             Image imageToShow = null;
             try {
-                Mat frame = fb.getFrame();
-                if (!frame.empty()) {
+                BufferedImage frame = fb.getFrame();
+                if (frame != null) {
                     double[][] coords = imageProcessor.findDots(frame);
-                    imageToShow = mat2Image(frame);
+                    imageToShow = SwingFXUtils.toFXImage(frame, null);
                     if (takeShoot && isScanning) {
                         double[][] fullCoords =
-                                formulaSolver.getCoordinates(coords, angle, frame.width(), frame.height());
+                                formulaSolver.getCoordinates(coords, angle, frame.getWidth(), frame.getHeight());
                         fileManager.appendToFile(fullCoords);
                         setTakeShoot(false);
                         nextScan();
@@ -248,12 +233,6 @@ public class Controller implements Initializable {
             return imageToShow;
         }
 
-        private Image mat2Image(Mat frame) {
-            MatOfByte buffer = new MatOfByte();
-            Highgui.imencode(".bmp", frame, buffer);
-            return new Image(new ByteArrayInputStream(buffer.toArray()));
-        }
-
         private void nextScan() {
             int steps;
             if (!deltaAngleFld.getText().isEmpty()) {
@@ -263,6 +242,10 @@ public class Controller implements Initializable {
             }
             serialWriter.rotate(steps);
             angle += (double) steps * 360 / STEPS_COUNT;
+        }
+
+        public void setCapture(boolean capture) {
+            this.capture = capture;
         }
     }
 }

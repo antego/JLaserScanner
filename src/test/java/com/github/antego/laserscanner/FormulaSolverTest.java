@@ -1,4 +1,4 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 //import org.junit.Assert;
 

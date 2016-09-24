@@ -1,4 +1,4 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,9 +10,7 @@ import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by anton on 15.03.2015.
- */
+
 public class FileManager {
     private static final Logger logger = Logger.getLogger(FileManager.class.toString());
 

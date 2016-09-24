@@ -1,4 +1,4 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 public class MainWindow extends Application {
 
     public static void main(String[] args) {
-        System.loadLibrary("opencv_native");
         launch(args);
     }
 
@@ -23,6 +22,5 @@ public class MainWindow extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.setOnCloseRequest(we -> controller.onClose());
         primaryStage.show();
-        controller.setRootElement(root);
     }
 }

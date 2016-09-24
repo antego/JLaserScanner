@@ -1,4 +1,4 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 import javafx.application.Platform;
 import jssc.SerialPort;

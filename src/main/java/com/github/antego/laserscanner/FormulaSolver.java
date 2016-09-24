@@ -1,10 +1,8 @@
-package org.antego.dev;
+package com.github.antego.laserscanner;
 
 import java.util.Arrays;
 
-/**
- * Created by anton on 10.03.2015.
- */
+
 public class FormulaSolver {
     private boolean valuesSet;
     private double h;

@@ -14,30 +14,19 @@ import java.util.List;
 public class ImageProcessor {
     private static final int WHITE_RGB = new Color(255, 255, 255).getRGB();
 
-    public static final double DEFAULT_HUE1_MIN = 170;
-    public static final double DEFAULT_HUE1_MAX = 179;
-    public static final double DEFAULT_HUE2_MIN = 0;
-    public static final double DEFAULT_HUE2_MAX = 10;
-    public static final double DEFAULT_SAT_MIN = 200;
-    public static final double DEFAULT_SAT_MAX = 255;
-    public static final double DEFAULT_VAL_MIN = 200;
-    public static final double DEFAULT_VAL_MAX = 255;
+    public static final double DEFAULT_HUE_MIN = 170, DEFAULT_HUE_MAX = 179;
+    public static final double DEFAULT_SAT_MIN = 200, DEFAULT_SAT_MAX = 255;
+    public static final double DEFAULT_VAL_MIN = 200, DEFAULT_VAL_MAX = 255;
 
-    private double minHue = DEFAULT_HUE1_MIN;
-    private double maxHue = DEFAULT_HUE1_MAX;
-    private double minSat = DEFAULT_SAT_MIN;
-    private double maxSat = DEFAULT_SAT_MAX;
-    private double minVal = DEFAULT_VAL_MIN;
-    private double maxVal = DEFAULT_VAL_MAX;
+    private double minHue = DEFAULT_HUE_MIN, maxHue = DEFAULT_HUE_MAX;
+    private double minSat = DEFAULT_SAT_MIN, maxSat = DEFAULT_SAT_MAX;
+    private double minVal = DEFAULT_VAL_MIN, maxVal = DEFAULT_VAL_MAX;
 
     private boolean showRawImg;
 
-    public synchronized void setThresholds(double hue1Min,
-                                           double hue1Max,
-                                           double satMin,
-                                           double satMax,
-                                           double valMin,
-                                           double valMax) {
+    public synchronized void setThresholds(double hue1Min, double hue1Max,
+                                           double satMin, double satMax,
+                                           double valMin, double valMax) {
         this.minHue = hue1Min;
         this.maxHue = hue1Max;
         this.minSat = satMin;

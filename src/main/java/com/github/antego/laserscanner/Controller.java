@@ -46,7 +46,7 @@ public class Controller implements Initializable {
     @FXML
     private CheckBox rawImgCheckbox;
     @FXML
-    private TextField hueMin1Fld, hueMin2Fld, hueMax1Fld, hueMax2Fld, satMinFld, satMaxFld, valMinFld, valMaxFld;
+    private TextField hueMinFld, hueMaxFld, satMinFld, satMaxFld, valMinFld, valMaxFld;
 
     private volatile boolean takeShoot;
     private double angle;
@@ -57,10 +57,8 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        hueMin1Fld.setText(DEFAULT_HUE1_MIN + "");
-        hueMax1Fld.setText(DEFAULT_HUE1_MAX + "");
-        hueMin2Fld.setText(DEFAULT_HUE2_MIN + "");
-        hueMax2Fld.setText(DEFAULT_HUE2_MAX + "");
+        hueMinFld.setText(DEFAULT_HUE_MIN + "");
+        hueMaxFld.setText(DEFAULT_HUE_MAX + "");
         satMinFld.setText(DEFAULT_SAT_MIN + "");
         satMaxFld.setText(DEFAULT_SAT_MAX + "");
         valMinFld.setText(DEFAULT_VAL_MIN + "");
@@ -80,16 +78,14 @@ public class Controller implements Initializable {
 
     @FXML
     protected void applyThresholdsClick(ActionEvent event) {
-        if (hueMin1Fld.getText() != null &&
-                hueMin2Fld.getText() != null &&
-                hueMax1Fld.getText() != null &&
-                hueMax2Fld.getText() != null &&
+        if (hueMinFld.getText() != null &&
+                hueMaxFld.getText() != null &&
                 satMinFld.getText() != null &&
                 satMaxFld.getText() != null &&
                 valMinFld.getText() != null &&
                 valMaxFld.getText() != null) {
-            imageProcessor.setThresholds(Double.parseDouble(hueMin1Fld.getText()),
-                    Double.parseDouble(hueMax1Fld.getText()),
+            imageProcessor.setThresholds(Double.parseDouble(hueMinFld.getText()),
+                    Double.parseDouble(hueMaxFld.getText()),
                     Double.parseDouble(satMinFld.getText()),
                     Double.parseDouble(satMaxFld.getText()),
                     Double.parseDouble(valMinFld.getText()),
